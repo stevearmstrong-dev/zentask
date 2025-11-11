@@ -7,6 +7,7 @@ import Onboarding from './components/Onboarding';
 import Greeting from './components/Greeting';
 import GoogleCalendarButton from './components/GoogleCalendarButton';
 import googleCalendarService from './services/googleCalendar';
+import supabaseService from './services/supabase';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -18,6 +19,8 @@ function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [userName, setUserName] = useState('');
   const [isCalendarConnected, setIsCalendarConnected] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const notifiedTasksRef = useRef(new Set());
 
   // Request notification permission
@@ -34,28 +37,58 @@ function App() {
 
   // Load tasks, dark mode, onboarding status, and userName from localStorage on mount
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
-    }
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode) {
-      setDarkMode(JSON.parse(savedDarkMode));
-    }
-    const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding');
-    if (!hasCompletedOnboarding) {
-      setShowOnboarding(true);
-    }
-    const savedUserName = localStorage.getItem('userName');
-    if (savedUserName) {
-      setUserName(savedUserName);
-    }
+    const loadInitialData = async () => {
+      // Load dark mode preference
+      const savedDarkMode = localStorage.getItem('darkMode');
+      if (savedDarkMode) {
+        setDarkMode(JSON.parse(savedDarkMode));
+      }
+
+      // Check onboarding status
+      const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding');
+      if (!hasCompletedOnboarding) {
+        setShowOnboarding(true);
+      }
+
+      // Load user name
+      const savedUserName = localStorage.getItem('userName');
+      if (savedUserName) {
+        setUserName(savedUserName);
+      }
+
+      // Load tasks from localStorage (fallback for non-signed-in users)
+      const savedTasks = localStorage.getItem('tasks');
+      if (savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+      }
+
+      setIsLoadingTasks(false);
+    };
+
+    loadInitialData();
   }, []);
 
-  // Save tasks to localStorage whenever they change
+  // Load tasks from Supabase when user signs in
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    const loadTasksFromSupabase = async () => {
+      if (userEmail) {
+        setIsLoadingTasks(true);
+        const dbTasks = await supabaseService.fetchTasks(userEmail);
+        const appTasks = dbTasks.map(task => supabaseService.convertToAppFormat(task));
+        setTasks(appTasks);
+        setIsLoadingTasks(false);
+      }
+    };
+
+    loadTasksFromSupabase();
+  }, [userEmail]);
+
+  // Save tasks to localStorage whenever they change (fallback for non-signed-in users)
+  useEffect(() => {
+    if (!userEmail) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, [tasks, userEmail]);
 
   // Save dark mode preference to localStorage
   useEffect(() => {
@@ -137,13 +170,36 @@ function App() {
       }
     }
 
+    // Save to Supabase if user is signed in
+    if (userEmail) {
+      try {
+        await supabaseService.createTask(newTask, userEmail);
+      } catch (error) {
+        console.error('Failed to save task to Supabase:', error);
+      }
+    }
+
     setTasks([newTask, ...tasks]);
   };
 
-  const toggleComplete = (id) => {
+  const toggleComplete = async (id) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    const updatedTask = { ...task, completed: !task.completed };
+
+    // Update in Supabase if user is signed in
+    if (userEmail) {
+      try {
+        await supabaseService.updateTask(id, updatedTask, userEmail);
+      } catch (error) {
+        console.error('Failed to update task in Supabase:', error);
+      }
+    }
+
     setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
+      tasks.map((t) =>
+        t.id === id ? updatedTask : t
       )
     );
   };
@@ -160,32 +216,57 @@ function App() {
       }
     }
 
+    // Delete from Supabase if user is signed in
+    if (userEmail) {
+      try {
+        await supabaseService.deleteTask(id, userEmail);
+      } catch (error) {
+        console.error('Failed to delete task from Supabase:', error);
+      }
+    }
+
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
   const editTask = async (id, updatedData) => {
     const task = tasks.find((t) => t.id === id);
+    const updatedTask = { ...task, ...updatedData };
 
     // Update in Google Calendar if synced
     if (isCalendarConnected && task?.calendarEventId && updatedData.dueDate) {
       try {
-        await googleCalendarService.updateEvent(task.calendarEventId, {
-          ...task,
-          ...updatedData,
-        });
+        await googleCalendarService.updateEvent(task.calendarEventId, updatedTask);
       } catch (error) {
         console.error('Failed to update event in calendar:', error);
       }
     }
 
+    // Update in Supabase if user is signed in
+    if (userEmail) {
+      try {
+        await supabaseService.updateTask(id, updatedTask, userEmail);
+      } catch (error) {
+        console.error('Failed to update task in Supabase:', error);
+      }
+    }
+
     setTasks(
       tasks.map((task) =>
-        task.id === id ? { ...task, ...updatedData } : task
+        task.id === id ? updatedTask : task
       )
     );
   };
 
-  const clearCompleted = () => {
+  const clearCompleted = async () => {
+    // Delete from Supabase if user is signed in
+    if (userEmail) {
+      try {
+        await supabaseService.deleteCompletedTasks(userEmail);
+      } catch (error) {
+        console.error('Failed to delete completed tasks from Supabase:', error);
+      }
+    }
+
     setTasks(tasks.filter((task) => !task.completed));
   };
 
@@ -195,6 +276,19 @@ function App() {
 
   const handleCalendarSignInChange = (signedIn) => {
     setIsCalendarConnected(signedIn);
+
+    // Get user email when signed in
+    if (signedIn) {
+      const profile = googleCalendarService.getUserProfile();
+      if (profile && profile.email) {
+        setUserEmail(profile.email);
+        if (profile.name) {
+          setUserName(profile.name);
+        }
+      }
+    } else {
+      setUserEmail('');
+    }
   };
 
   const getFilteredTasks = () => {
