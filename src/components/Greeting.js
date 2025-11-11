@@ -58,7 +58,7 @@ function Greeting({ userName }) {
   return (
     <div className="greeting-section">
       <h1 className="greeting-text">
-        {greeting}, {displayName}<span className="greeting-dot">.</span>
+        {greeting}, {displayName}
       </h1>
       <p className="motivational-quote">{quote}</p>
     </div>
