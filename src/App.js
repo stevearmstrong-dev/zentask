@@ -3,6 +3,8 @@ import './App.css';
 import ToDoForm from './components/ToDoForm';
 import ToDo from './components/ToDo';
 import Dashboard from './components/Dashboard';
+import Onboarding from './components/Onboarding';
+import Greeting from './components/Greeting';
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +13,8 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [view, setView] = useState('tasks'); // 'tasks' or 'dashboard'
   const [notificationPermission, setNotificationPermission] = useState('default');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [userName, setUserName] = useState('');
   const notifiedTasksRef = useRef(new Set());
 
   // Request notification permission
@@ -25,7 +29,7 @@ function App() {
     }
   }, []);
 
-  // Load tasks and dark mode preference from localStorage on mount
+  // Load tasks, dark mode, onboarding status, and userName from localStorage on mount
   useEffect(() => {
     const savedTasks = localStorage.getItem('tasks');
     if (savedTasks) {
@@ -34,6 +38,14 @@ function App() {
     const savedDarkMode = localStorage.getItem('darkMode');
     if (savedDarkMode) {
       setDarkMode(JSON.parse(savedDarkMode));
+    }
+    const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding');
+    if (!hasCompletedOnboarding) {
+      setShowOnboarding(true);
+    }
+    const savedUserName = localStorage.getItem('userName');
+    if (savedUserName) {
+      setUserName(savedUserName);
     }
   }, []);
 
@@ -137,6 +149,10 @@ function App() {
     setTasks(tasks.filter((task) => !task.completed));
   };
 
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
+
   const getFilteredTasks = () => {
     let filtered = tasks;
 
@@ -168,9 +184,15 @@ function App() {
 
   return (
     <div className={`todo-app ${darkMode ? 'dark-mode' : ''}`}>
+      {showOnboarding && (
+        <Onboarding onComplete={handleOnboardingComplete} addTask={addTask} />
+      )}
+
       <div className="todo-container">
         <div className="header">
-          <h1 className="todo-title">ToDo App</h1>
+          <div className="header-left">
+            <h1 className="todo-title">ToDo App</h1>
+          </div>
           <div className="header-controls">
             <button
               className="dark-mode-toggle"
@@ -195,6 +217,8 @@ function App() {
             </div>
           </div>
         </div>
+
+        <Greeting userName={userName} />
 
         {view === 'tasks' ? (
           <>
