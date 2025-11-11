@@ -1,4 +1,31 @@
-# Getting Started with Create React App
+# ToDo App
+
+A modern, feature-rich ToDo application built with React, featuring task management, priorities, scheduling, reminders, and analytics dashboard.
+
+## Live Demo
+
+**[View Live App](https://stevearmstrong-dev.github.io/react-todo-app)**
+
+## Features
+
+- **Task Management**: Create, edit, delete, and mark tasks as complete
+- **Priority Levels**: High, medium, and low priority tags
+- **Scheduling**: Set due dates and specific times for tasks
+- **Reminders**: Browser notifications (5 min, 15 min, 30 min, 1 hour, 1 day before due time)
+- **Categories**: Organize tasks with custom categories
+- **Search & Filter**: Search tasks and filter by status (all, active, completed)
+- **Dark Mode**: Toggle between light and dark themes with localStorage persistence
+- **Analytics Dashboard**: Visual charts showing task completion, priority breakdown, and category distribution
+- **Overdue Detection**: Automatic detection and warnings for overdue tasks
+- **Local Storage**: All tasks are saved locally and persist across sessions
+
+## Technologies Used
+
+- React 18
+- Chart.js & react-chartjs-2 for data visualization
+- Browser Notification API
+- localStorage for data persistence
+- CSS with Apple-inspired minimal design
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
