@@ -913,3 +913,247 @@ body {
     font-size: 0.85rem;
   }
 }
+
+/* Onboarding Styles */
+.onboarding-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.onboarding-container {
+  background: white;
+  border-radius: 32px;
+  padding: 60px 50px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skip-button {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  background: transparent;
+  border: none;
+  color: #007aff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.skip-button:hover {
+  background: #f5f5f7;
+}
+
+.onboarding-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 40px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.onboarding-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.onboarding-input {
+  padding: 18px 24px;
+  border: 2px solid #e8e8ed;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s;
+  background: white;
+}
+
+.onboarding-input:focus,
+.onboarding-input.focused {
+  border-color: #007aff;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+.onboarding-input::placeholder {
+  color: #c7c7cc;
+}
+
+.suggested-tasks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.suggested-task-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #f5f5f7;
+  border: none;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #86868b;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.suggested-task-btn:hover {
+  background: #e8e8ed;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.plus-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #007aff;
+  color: white;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.continue-button {
+  width: 100%;
+  padding: 16px;
+  background: #007aff;
+  border: none;
+  border-radius: 16px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.continue-button:hover {
+  background: #0051d5;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.3);
+}
+
+.continue-button:active {
+  transform: translateY(0);
+}
+
+/* Greeting Styles */
+.greeting-section {
+  margin-bottom: 40px;
+  padding: 30px 0;
+  text-align: left;
+}
+
+.greeting-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.greeting-dot {
+  color: #007aff;
+  font-weight: 800;
+}
+
+.dark-mode .greeting-text {
+  color: #f5f5f7;
+}
+
+.motivational-quote {
+  font-size: 1.25rem;
+  color: #86868b;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  line-height: 1.4;
+}
+
+.dark-mode .motivational-quote {
+  color: #98989d;
+}
+
+/* Responsive Onboarding */
+@media (max-width: 768px) {
+  .onboarding-container {
+    padding: 40px 30px;
+  }
+
+  .onboarding-title {
+    font-size: 2rem;
+  }
+
+  .suggested-tasks {
+    grid-template-columns: 1fr;
+  }
+
+  .greeting-text {
+    font-size: 2rem;
+  }
+
+  .motivational-quote {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .onboarding-container {
+    padding: 30px 20px;
+  }
+
+  .onboarding-title {
+    font-size: 1.75rem;
+  }
+
+  .onboarding-input {
+    font-size: 1rem;
+    padding: 14px 20px;
+  }
+
+  .greeting-text {
+    font-size: 1.75rem;
+  }
+
+  .motivational-quote {
+    font-size: 1rem;
+  }
+}
