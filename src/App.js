@@ -5,11 +5,9 @@ import ToDo from './components/ToDo';
 import Dashboard from './components/Dashboard';
 import Onboarding from './components/Onboarding';
 import Greeting from './components/Greeting';
-import GoogleCalendarButton from './components/GoogleCalendarButton';
 import SignIn from './components/Auth/SignIn';
 import SignUp from './components/Auth/SignUp';
 import PasswordReset from './components/Auth/PasswordReset';
-import googleCalendarService from './services/googleCalendar';
 import supabaseService from './services/supabase';
 
 function App() {
@@ -24,7 +22,6 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [userName, setUserName] = useState('');
-  const [isCalendarConnected, setIsCalendarConnected] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const notifiedTasksRef = useRef(new Set());
 
@@ -177,18 +174,7 @@ function App() {
       dueTime: taskData.dueTime || '',
       category: taskData.category || '',
       reminderMinutes: taskData.reminderMinutes || null,
-      calendarEventId: null,
     };
-
-    // Sync to Google Calendar if connected and task has a due date
-    if (isCalendarConnected && newTask.dueDate) {
-      try {
-        const event = await googleCalendarService.createEvent(newTask);
-        newTask.calendarEventId = event.id;
-      } catch (error) {
-        console.error('Failed to sync task to calendar:', error);
-      }
-    }
 
     // Save to Supabase if user is signed in
     if (userEmail) {
@@ -225,17 +211,6 @@ function App() {
   };
 
   const deleteTask = async (id) => {
-    const task = tasks.find((t) => t.id === id);
-
-    // Delete from Google Calendar if synced
-    if (isCalendarConnected && task?.calendarEventId) {
-      try {
-        await googleCalendarService.deleteEvent(task.calendarEventId);
-      } catch (error) {
-        console.error('Failed to delete event from calendar:', error);
-      }
-    }
-
     // Delete from Supabase if user is signed in
     if (userEmail) {
       try {
@@ -251,15 +226,6 @@ function App() {
   const editTask = async (id, updatedData) => {
     const task = tasks.find((t) => t.id === id);
     const updatedTask = { ...task, ...updatedData };
-
-    // Update in Google Calendar if synced
-    if (isCalendarConnected && task?.calendarEventId && updatedData.dueDate) {
-      try {
-        await googleCalendarService.updateEvent(task.calendarEventId, updatedTask);
-      } catch (error) {
-        console.error('Failed to update event in calendar:', error);
-      }
-    }
 
     // Update in Supabase if user is signed in
     if (userEmail) {
@@ -295,10 +261,6 @@ function App() {
       localStorage.setItem(`hasCompletedOnboarding_${user.id}`, 'true');
     }
     setShowOnboarding(false);
-  };
-
-  const handleCalendarSignInChange = (signedIn) => {
-    setIsCalendarConnected(signedIn);
   };
 
   const handleSignOut = async () => {
@@ -396,7 +358,6 @@ function App() {
               <span className="user-avatar">{userName.charAt(0).toUpperCase()}</span>
               <span className="user-name">{userName}</span>
             </div>
-            <GoogleCalendarButton onSignInChange={handleCalendarSignInChange} />
             <button
               className="dark-mode-toggle"
               onClick={() => setDarkMode(!darkMode)}
