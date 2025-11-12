@@ -3,6 +3,7 @@ import './App.css';
 import ToDoForm from './components/ToDoForm';
 import ToDo from './components/ToDo';
 import Dashboard from './components/Dashboard';
+import TodayView from './components/TodayView';
 import Onboarding from './components/Onboarding';
 import Greeting from './components/Greeting';
 import SignIn from './components/Auth/SignIn';
@@ -15,7 +16,7 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
-  const [view, setView] = useState('tasks'); // 'tasks' or 'dashboard'
+  const [view, setView] = useState('today'); // 'today', 'tasks', or 'dashboard'
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [authView, setAuthView] = useState('signin'); // 'signin', 'signup', 'reset'
@@ -374,10 +375,16 @@ function App() {
             </button>
             <div className="view-switcher">
               <button
+                className={view === 'today' ? 'view-btn active' : 'view-btn'}
+                onClick={() => setView('today')}
+              >
+                Today
+              </button>
+              <button
                 className={view === 'tasks' ? 'view-btn active' : 'view-btn'}
                 onClick={() => setView('tasks')}
               >
-                Tasks
+                All Tasks
               </button>
               <button
                 className={view === 'dashboard' ? 'view-btn active' : 'view-btn'}
@@ -389,9 +396,19 @@ function App() {
           </div>
         </div>
 
-        <Greeting userName={userName} />
+        {view !== 'today' && <Greeting userName={userName} />}
 
-        {view === 'tasks' ? (
+        {view === 'today' ? (
+          <>
+            <ToDoForm addTask={addTask} />
+            <TodayView
+              tasks={tasks}
+              toggleComplete={toggleComplete}
+              deleteTask={deleteTask}
+              editTask={editTask}
+            />
+          </>
+        ) : view === 'tasks' ? (
           <>
             <ToDoForm addTask={addTask} />
 
