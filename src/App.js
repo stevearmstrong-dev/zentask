@@ -6,7 +6,9 @@ import Dashboard from './components/Dashboard';
 import Onboarding from './components/Onboarding';
 import Greeting from './components/Greeting';
 import GoogleCalendarButton from './components/GoogleCalendarButton';
-import EmailPrompt from './components/EmailPrompt';
+import SignIn from './components/Auth/SignIn';
+import SignUp from './components/Auth/SignUp';
+import PasswordReset from './components/Auth/PasswordReset';
 import googleCalendarService from './services/googleCalendar';
 import supabaseService from './services/supabase';
 
@@ -18,11 +20,12 @@ function App() {
   const [view, setView] = useState('tasks'); // 'tasks' or 'dashboard'
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
+  const [authView, setAuthView] = useState('signin'); // 'signin', 'signup', 'reset'
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [userName, setUserName] = useState('');
   const [isCalendarConnected, setIsCalendarConnected] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-  const [isLoadingTasks, setIsLoadingTasks] = useState(true);
   const notifiedTasksRef = useRef(new Set());
 
   // Request notification permission
@@ -37,7 +40,41 @@ function App() {
     }
   }, []);
 
-  // Load tasks, dark mode, onboarding status, and userName from localStorage on mount
+  // Check for authenticated user on mount and listen to auth changes
+  useEffect(() => {
+    // Check current session
+    supabaseService.getCurrentUser().then((currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        setUserEmail(currentUser.email);
+        setUserName(currentUser.user_metadata?.name || currentUser.email.split('@')[0]);
+      }
+      setAuthLoading(false);
+    });
+
+    // Listen for auth state changes
+    const { data: authListener } = supabaseService.getAuthStateChangeListener((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setUser(session.user);
+        setUserEmail(session.user.email);
+        setUserName(session.user.user_metadata?.name || session.user.email.split('@')[0]);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setUserEmail('');
+        setUserName('');
+        setTasks([]);
+      }
+    });
+
+    // Cleanup listener
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, []);
+
+  // Load initial preferences from localStorage
   useEffect(() => {
     const loadInitialData = async () => {
       // Load dark mode preference
@@ -46,60 +83,32 @@ function App() {
         setDarkMode(JSON.parse(savedDarkMode));
       }
 
-      // Check onboarding status
-      const hasCompletedOnboarding = localStorage.getItem('hasCompletedOnboarding');
-      if (!hasCompletedOnboarding) {
-        setShowOnboarding(true);
+      // Check onboarding status (only for authenticated users)
+      if (user) {
+        const hasCompletedOnboarding = localStorage.getItem(`hasCompletedOnboarding_${user.id}`);
+        if (!hasCompletedOnboarding) {
+          setShowOnboarding(true);
+        }
       }
-
-      // Load user name
-      const savedUserName = localStorage.getItem('userName');
-      if (savedUserName) {
-        setUserName(savedUserName);
-      }
-
-      // Load user email and show prompt if not found
-      const savedUserEmail = localStorage.getItem('userEmail');
-      if (savedUserEmail) {
-        setUserEmail(savedUserEmail);
-      } else if (hasCompletedOnboarding) {
-        // Show email prompt after onboarding is complete
-        setShowEmailPrompt(true);
-      }
-
-      // Load tasks from localStorage (fallback for non-signed-in users)
-      const savedTasks = localStorage.getItem('tasks');
-      if (savedTasks) {
-        setTasks(JSON.parse(savedTasks));
-      }
-
-      setIsLoadingTasks(false);
     };
 
     loadInitialData();
-  }, []);
+  }, [user]);
 
   // Load tasks from Supabase when user signs in
   useEffect(() => {
     const loadTasksFromSupabase = async () => {
       if (userEmail) {
-        setIsLoadingTasks(true);
         const dbTasks = await supabaseService.fetchTasks(userEmail);
         const appTasks = dbTasks.map(task => supabaseService.convertToAppFormat(task));
         setTasks(appTasks);
-        setIsLoadingTasks(false);
       }
     };
 
     loadTasksFromSupabase();
   }, [userEmail]);
 
-  // Save tasks to localStorage whenever they change (fallback for non-signed-in users)
-  useEffect(() => {
-    if (!userEmail) {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-  }, [tasks, userEmail]);
+  // No longer saving tasks to localStorage - using Supabase exclusively
 
   // Save dark mode preference to localStorage
   useEffect(() => {
@@ -282,33 +291,23 @@ function App() {
   };
 
   const handleOnboardingComplete = () => {
+    if (user) {
+      localStorage.setItem(`hasCompletedOnboarding_${user.id}`, 'true');
+    }
     setShowOnboarding(false);
   };
 
   const handleCalendarSignInChange = (signedIn) => {
     setIsCalendarConnected(signedIn);
+  };
 
-    // Get user email when signed in
-    if (signedIn) {
-      const profile = googleCalendarService.getUserProfile();
-      if (profile && profile.email) {
-        setUserEmail(profile.email);
-        if (profile.name) {
-          setUserName(profile.name);
-        }
-      }
-    } else {
-      setUserEmail('');
+  const handleSignOut = async () => {
+    try {
+      await supabaseService.signOut();
+      // State will be updated by auth listener
+    } catch (error) {
+      console.error('Error signing out:', error);
     }
-  };
-
-  const handleEmailComplete = (email) => {
-    setUserEmail(email);
-    setShowEmailPrompt(false);
-  };
-
-  const handleChangeEmail = () => {
-    setShowEmailPrompt(true);
   };
 
   const getFilteredTasks = () => {
@@ -340,14 +339,51 @@ function App() {
   const filteredTasks = getFilteredTasks();
   const activeCount = tasks.filter((task) => !task.completed).length;
 
+  // Show loading screen while checking auth
+  if (authLoading) {
+    return (
+      <div className={`todo-app ${darkMode ? 'dark-mode' : ''}`}>
+        <div className="auth-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show auth screens if not authenticated
+  if (!user) {
+    if (authView === 'signup') {
+      return (
+        <SignUp
+          onSignUpSuccess={() => setAuthView('signin')}
+          onSwitchToSignIn={() => setAuthView('signin')}
+        />
+      );
+    }
+
+    if (authView === 'reset') {
+      return (
+        <PasswordReset
+          onBackToSignIn={() => setAuthView('signin')}
+        />
+      );
+    }
+
+    return (
+      <SignIn
+        onSignInSuccess={() => {}}
+        onSwitchToSignUp={() => setAuthView('signup')}
+        onSwitchToReset={() => setAuthView('reset')}
+      />
+    );
+  }
+
+  // Main app (authenticated users only)
   return (
     <div className={`todo-app ${darkMode ? 'dark-mode' : ''}`}>
       {showOnboarding && (
         <Onboarding onComplete={handleOnboardingComplete} addTask={addTask} />
-      )}
-
-      {showEmailPrompt && (
-        <EmailPrompt onComplete={handleEmailComplete} />
       )}
 
       <div className="todo-container">
@@ -356,15 +392,10 @@ function App() {
             <h1 className="todo-title">ToDo App</h1>
           </div>
           <div className="header-controls">
-            {userEmail && !isCalendarConnected && (
-              <div className="user-email-display">
-                <span className="email-icon">✉️</span>
-                <span className="email-text">{userEmail}</span>
-                <button className="change-email-btn" onClick={handleChangeEmail} title="Change Email">
-                  ✎
-                </button>
-              </div>
-            )}
+            <div className="user-info">
+              <span className="user-avatar">{userName.charAt(0).toUpperCase()}</span>
+              <span className="user-name">{userName}</span>
+            </div>
             <GoogleCalendarButton onSignInChange={handleCalendarSignInChange} />
             <button
               className="dark-mode-toggle"
@@ -372,6 +403,13 @@ function App() {
               title={darkMode ? 'Light Mode' : 'Dark Mode'}
             >
               {darkMode ? '☀️' : '🌙'}
+            </button>
+            <button
+              className="sign-out-button"
+              onClick={handleSignOut}
+              title="Sign Out"
+            >
+              Sign Out
             </button>
             <div className="view-switcher">
               <button

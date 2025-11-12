@@ -7,7 +7,35 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 class SupabaseService {
-  // Fetch all tasks for a user
+  // Auth methods
+  async getCurrentUser() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      return user;
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
+    }
+  }
+
+  async signOut() {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  }
+
+  getAuthStateChangeListener(callback) {
+    return supabase.auth.onAuthStateChange((event, session) => {
+      callback(event, session);
+    });
+  }
+
+  // Fetch all tasks for authenticated user
   async fetchTasks(userEmail) {
     if (!userEmail) return [];
 

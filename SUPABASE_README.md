@@ -31,18 +31,27 @@ The `tasks` table stores all user tasks with the following structure:
 
 ### Row Level Security (RLS)
 
-**RLS is DISABLED for this table.**
+**RLS is ENABLED for this table.**
 
-This app uses simple email-based user identification without Supabase Auth. Data isolation is handled entirely in the application code by filtering tasks based on the `user_email` field.
+This app uses Supabase Auth with email/password authentication. Row Level Security policies ensure that users can only access their own tasks at the database level.
 
-If RLS were enabled, it would require authenticated users (via `auth.jwt()`), which is not compatible with the simple email identification system used in this app.
+#### RLS Policies
+
+All policies use `auth.jwt() ->> 'email' = user_email` to ensure users can only access tasks where the `user_email` matches their authenticated email address.
+
+- **SELECT**: Users can view their own tasks
+- **INSERT**: Users can create tasks (must match their email)
+- **UPDATE**: Users can update their own tasks
+- **DELETE**: Users can delete their own tasks
 
 ### Security Model
 
-- **Email-based isolation**: Tasks are filtered by `user_email` in all database queries
-- **Client-side filtering**: The app only fetches and displays tasks matching the current user's email
-- **No authentication**: Users simply provide an email address; there's no password or OAuth flow
-- **Suitable for**: Personal use, demos, prototypes, non-sensitive data
+- **Supabase Auth**: Full authentication with email/password
+- **Email verification**: Required before users can sign in
+- **Database-level security**: RLS policies enforce access control
+- **Password reset**: Built-in password recovery flow
+- **Session management**: JWT tokens with automatic refresh
+- **Suitable for**: Production apps, multi-user environments, sensitive data
 
 ## Environment Variables
 
@@ -58,29 +67,44 @@ const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
 - **Project URL**: https://nylvcqjzczvfkjjbeoef.supabase.co
 - **Database**: PostgreSQL
 - **Region**: Auto-selected based on project creation
-- **RLS**: Disabled
+- **RLS**: Enabled with auth-based policies
+- **Authentication**: Email/password with email verification required
 
 ## Testing the Setup
 
 1. Visit the deployed app: https://stevearmstrong-dev.github.io/react-todo-app
-2. Enter an email address when prompted
-3. Create a new task
-4. Verify the task appears in Supabase Table Editor
-5. Refresh the page and confirm the task persists
-6. Open the app on another device/browser with the same email
-7. Confirm tasks are synced across devices
+2. Click "Sign Up" to create a new account
+3. Enter your name (optional), email, password, and confirm password
+4. Click "Sign Up" - you'll see a verification message
+5. Check your email inbox for the verification link from Supabase
+6. Click the verification link to confirm your email
+7. Return to the app and sign in with your email and password
+8. Create a new task
+9. Verify the task appears in Supabase Table Editor
+10. Sign out and sign back in to confirm tasks persist
+11. Open the app on another device, sign in with the same account
+12. Confirm tasks are synced across devices
 
 ## Troubleshooting
 
+### Can't sign in after sign up?
+- Check your email for the verification link
+- Verification emails may take a few minutes to arrive
+- Check spam folder if you don't see the email
+- Make sure you clicked the verification link before trying to sign in
+
 ### Tasks not appearing in Supabase?
+- Ensure you're signed in (not just signed up)
 - Check browser console for errors
 - Verify SUPABASE_URL and SUPABASE_ANON_KEY are correct
-- Ensure RLS is disabled: `ALTER TABLE tasks DISABLE ROW LEVEL SECURITY;`
+- Ensure RLS is enabled: `ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;`
+- Verify RLS policies are created (run the policies from supabase-setup.sql)
 
 ### Tasks disappearing after refresh?
-- Verify RLS is disabled (most common issue)
-- Check that the correct email is being used
-- Look for errors in browser console
+- Ensure you're signed in (session may have expired)
+- Check browser console for authentication errors
+- Try signing out and signing back in
+- Verify your email is verified in Supabase Auth dashboard
 
 ### Can't query tasks in SQL Editor?
 ```sql
