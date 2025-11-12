@@ -5,10 +5,12 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask }) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Helper function to parse task date
+  // Helper function to parse task date in local timezone
   const getTaskDate = (task) => {
     if (!task.dueDate) return null;
-    return new Date(task.dueDate);
+    // Parse date string (YYYY-MM-DD) in local timezone to avoid UTC conversion issues
+    const [year, month, day] = task.dueDate.split('-').map(Number);
+    return new Date(year, month - 1, day);
   };
 
   // Filter overdue tasks (due before today and not completed)
