@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import Onboarding from './components/Onboarding';
 import Greeting from './components/Greeting';
 import GoogleCalendarButton from './components/GoogleCalendarButton';
+import EmailPrompt from './components/EmailPrompt';
 import googleCalendarService from './services/googleCalendar';
 import supabaseService from './services/supabase';
 
@@ -17,6 +18,7 @@ function App() {
   const [view, setView] = useState('tasks'); // 'tasks' or 'dashboard'
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
   const [userName, setUserName] = useState('');
   const [isCalendarConnected, setIsCalendarConnected] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -54,6 +56,15 @@ function App() {
       const savedUserName = localStorage.getItem('userName');
       if (savedUserName) {
         setUserName(savedUserName);
+      }
+
+      // Load user email and show prompt if not found
+      const savedUserEmail = localStorage.getItem('userEmail');
+      if (savedUserEmail) {
+        setUserEmail(savedUserEmail);
+      } else if (hasCompletedOnboarding) {
+        // Show email prompt after onboarding is complete
+        setShowEmailPrompt(true);
       }
 
       // Load tasks from localStorage (fallback for non-signed-in users)
@@ -291,6 +302,15 @@ function App() {
     }
   };
 
+  const handleEmailComplete = (email) => {
+    setUserEmail(email);
+    setShowEmailPrompt(false);
+  };
+
+  const handleChangeEmail = () => {
+    setShowEmailPrompt(true);
+  };
+
   const getFilteredTasks = () => {
     let filtered = tasks;
 
@@ -326,12 +346,25 @@ function App() {
         <Onboarding onComplete={handleOnboardingComplete} addTask={addTask} />
       )}
 
+      {showEmailPrompt && (
+        <EmailPrompt onComplete={handleEmailComplete} />
+      )}
+
       <div className="todo-container">
         <div className="header">
           <div className="header-left">
             <h1 className="todo-title">ToDo App</h1>
           </div>
           <div className="header-controls">
+            {userEmail && !isCalendarConnected && (
+              <div className="user-email-display">
+                <span className="email-icon">✉️</span>
+                <span className="email-text">{userEmail}</span>
+                <button className="change-email-btn" onClick={handleChangeEmail} title="Change Email">
+                  ✎
+                </button>
+              </div>
+            )}
             <GoogleCalendarButton onSignInChange={handleCalendarSignInChange} />
             <button
               className="dark-mode-toggle"
