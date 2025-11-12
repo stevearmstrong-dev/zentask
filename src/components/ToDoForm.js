@@ -8,6 +8,15 @@ function ToDoForm({ addTask }) {
   const [category, setCategory] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('15');
 
+  // Get today's date in local timezone (YYYY-MM-DD format)
+  const getTodayLocalDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (input.trim()) {
@@ -57,7 +66,7 @@ function ToDoForm({ addTask }) {
           className="todo-date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          min={new Date().toISOString().split('T')[0]}
+          min={getTodayLocalDate()}
           placeholder="Due date"
         />
 
