@@ -103,11 +103,13 @@ function TimePicker({ selectedTime, onSelectTime }) {
 
   // Generate clock positions for hours (12 numbers in a circle)
   const getClockPosition = (value, total = 12) => {
-    const angle = ((value % total) * 360) / total - 90;
+    // Adjust for 12-hour clock (12 should be at top, not 0)
+    const adjustedValue = value === 12 ? 0 : value;
+    const angle = (adjustedValue * 360) / total - 90;
     const radian = (angle * Math.PI) / 180;
     const radius = 85;
-    const x = 50 + radius * Math.cos(radian);
-    const y = 50 + radius * Math.sin(radian);
+    const x = 100 + radius * Math.cos(radian);
+    const y = 100 + radius * Math.sin(radian);
     return { x, y };
   };
 
