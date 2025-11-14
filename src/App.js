@@ -9,6 +9,7 @@ import Greeting from './components/Greeting';
 import SignIn from './components/Auth/SignIn';
 import SignUp from './components/Auth/SignUp';
 import PasswordReset from './components/Auth/PasswordReset';
+import QuickAddTasks from './components/QuickAddTasks';
 import supabaseService from './services/supabase';
 
 function App() {
@@ -402,6 +403,7 @@ function App() {
 
         {view === 'today' ? (
           <>
+            <QuickAddTasks addTask={addTask} />
             <ToDoForm addTask={addTask} />
             <TodayView
               tasks={tasks}
@@ -412,6 +414,7 @@ function App() {
           </>
         ) : view === 'tasks' ? (
           <>
+            <QuickAddTasks addTask={addTask} />
             <ToDoForm addTask={addTask} />
 
             <div className="search-filter-container">
