@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Zentask - Calm, mindful productivity with smart task management and Pomodoro timer",
   "private": true,
-  "homepage": "https://stevearmstrong-dev.github.io/react-todo-app",
+  "homepage": "https://stevearmstrong-dev.github.io/zentask",
   "dependencies": {
     "@supabase/supabase-js": "^2.81.1",
     "chart.js": "^4.5.1",
