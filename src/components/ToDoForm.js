@@ -30,7 +30,7 @@ function ToDoForm({ addTask }) {
       addTask({
         text: input,
         priority: priority,
-        dueDate: dueDate,
+        dueDate: dueDate || getTodayLocalDate(), // Default to today if no date selected
         dueTime: dueTime,
         category: category.trim(),
         reminderMinutes: reminderMinutes ? parseInt(reminderMinutes) : null
