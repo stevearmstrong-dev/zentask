@@ -3366,3 +3366,353 @@ body {
     padding: 16px;
   }
 }
+
+/* ============================================
+   Time Picker
+   ============================================ */
+
+.time-picker-wrapper {
+  position: relative;
+  display: inline-block;
+  flex: 1;
+  min-width: 150px;
+}
+
+.time-trigger {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.2);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.dark-mode .time-trigger {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border-color: rgba(115, 171, 255, 0.25);
+  color: #f5f5f7;
+}
+
+.time-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.15);
+}
+
+.dark-mode .time-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.25);
+}
+
+.time-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.time-display {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time-arrow {
+  font-size: 0.7rem;
+  color: #73ABFF;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.time-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(17, 23, 34, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  overflow: hidden;
+  animation: timeFadeIn 0.2s ease-out;
+}
+
+.dark-mode .time-dropdown {
+  background: rgba(17, 23, 34, 0.98);
+  border-color: rgba(115, 171, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes timeFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.time-picker-header {
+  padding: 16px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.08);
+  text-align: center;
+}
+
+.dark-mode .time-picker-header {
+  border-bottom-color: rgba(115, 171, 255, 0.15);
+}
+
+.time-picker-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .time-picker-title {
+  color: #f5f5f7;
+}
+
+.time-selectors {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px;
+}
+
+.time-selector-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.period-column {
+  flex: 0.8;
+}
+
+.time-selector-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.dark-mode .time-selector-label {
+  color: #98989d;
+}
+
+.time-scroll-container {
+  max-height: 180px;
+  overflow-y: auto;
+  border-radius: 10px;
+  background: rgba(17, 23, 34, 0.02);
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(115, 171, 255, 0.3) transparent;
+}
+
+.dark-mode .time-scroll-container {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.time-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.time-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.time-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(115, 171, 255, 0.3);
+  border-radius: 3px;
+}
+
+.time-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(115, 171, 255, 0.5);
+}
+
+.time-option {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+}
+
+.dark-mode .time-option {
+  color: #f5f5f7;
+}
+
+.time-option:hover {
+  background: rgba(115, 171, 255, 0.1);
+}
+
+.time-option.selected {
+  background: linear-gradient(135deg, #73ABFF 0%, #5A8FE6 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(115, 171, 255, 0.3);
+}
+
+.time-selector-separator {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #73ABFF;
+  align-self: center;
+  margin-top: 28px;
+}
+
+.period-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.period-option {
+  padding: 12px;
+  background: rgba(17, 23, 34, 0.02);
+  border: 1px solid rgba(115, 171, 255, 0.15);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode .period-option {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(115, 171, 255, 0.2);
+  color: #f5f5f7;
+}
+
+.period-option:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: rgba(115, 171, 255, 0.08);
+}
+
+.period-option.selected {
+  background: linear-gradient(135deg, #73ABFF 0%, #5A8FE6 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 2px 8px rgba(115, 171, 255, 0.3);
+}
+
+.time-picker-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(17, 23, 34, 0.08);
+}
+
+.dark-mode .time-picker-actions {
+  border-top-color: rgba(115, 171, 255, 0.15);
+}
+
+.time-clear-btn,
+.time-apply-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.time-clear-btn {
+  background: rgba(17, 23, 34, 0.05);
+  color: #1d1d1f;
+}
+
+.dark-mode .time-clear-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5f5f7;
+}
+
+.time-clear-btn:hover {
+  background: rgba(17, 23, 34, 0.1);
+  transform: translateY(-1px);
+}
+
+.dark-mode .time-clear-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.time-apply-btn {
+  background: linear-gradient(135deg, #73ABFF 0%, #5A8FE6 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.3);
+}
+
+.time-apply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(115, 171, 255, 0.4);
+}
+
+.time-apply-btn:active {
+  transform: translateY(0);
+}
+
+/* Time Picker Form Integration */
+.form-options .time-picker-wrapper {
+  flex: 1;
+  min-width: 150px;
+}
+
+.edit-options .time-picker-wrapper {
+  flex: 1;
+  min-width: 130px;
+}
+
+.edit-options .time-trigger {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-options .time-picker-wrapper,
+  .edit-options .time-picker-wrapper {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .time-dropdown {
+    max-width: 100%;
+  }
+
+  .time-selectors {
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .time-scroll-container {
+    max-height: 150px;
+  }
+}

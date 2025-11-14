@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
+import TimePicker from './TimePicker';
 
 function ToDoForm({ addTask }) {
   const [input, setInput] = useState('');
@@ -69,12 +70,9 @@ function ToDoForm({ addTask }) {
           minDate={getTodayLocalDate()}
         />
 
-        <input
-          type="time"
-          className="todo-time"
-          value={dueTime}
-          onChange={(e) => setDueTime(e.target.value)}
-          placeholder="Time"
+        <TimePicker
+          selectedTime={dueTime}
+          onSelectTime={setDueTime}
         />
 
         <CategoryPicker
