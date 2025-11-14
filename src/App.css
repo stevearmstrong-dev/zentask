@@ -2051,6 +2051,43 @@ body {
   cursor: not-allowed;
 }
 
+.guest-button {
+  background: rgba(255, 255, 255, 0.15);
+  color: #007aff;
+  border: 2px solid rgba(0, 122, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-top: 12px;
+}
+
+.guest-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(0, 122, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.2);
+}
+
+.guest-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.guest-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dark-mode .guest-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #73abff;
+  border-color: rgba(115, 171, 255, 0.3);
+}
+
+.dark-mode .guest-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(115, 171, 255, 0.5);
+  box-shadow: 0 8px 20px rgba(115, 171, 255, 0.2);
+}
+
 .secondary-button {
   background: #e8e8ed;
   color: #1d1d1f;

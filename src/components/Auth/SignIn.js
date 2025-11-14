@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../services/supabase';
 
-function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset }) {
+function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMode }) {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -129,6 +129,15 @@ function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset }) {
               disabled={loading}
             >
               {loading ? 'Signing In...' : 'Sign In'}
+            </button>
+
+            <button
+              type="button"
+              className="auth-button guest-button"
+              onClick={onGuestMode}
+              disabled={loading}
+            >
+              Continue as Guest
             </button>
           </form>
 

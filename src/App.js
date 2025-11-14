@@ -25,6 +25,7 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [isGuestMode, setIsGuestMode] = useState(false);
   const notifiedTasksRef = useRef(new Set());
 
   // Request notification permission
@@ -41,6 +42,20 @@ function App() {
 
   // Check for authenticated user on mount and listen to auth changes
   useEffect(() => {
+    // Check for guest mode
+    const guestMode = localStorage.getItem('guestMode');
+    if (guestMode === 'true') {
+      setIsGuestMode(true);
+      setUserName('Guest');
+      setAuthLoading(false);
+      // Load tasks from localStorage for guest
+      const savedTasks = localStorage.getItem('guestTasks');
+      if (savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+      }
+      return;
+    }
+
     // Check current session
     supabaseService.getCurrentUser().then((currentUser) => {
       if (currentUser) {
@@ -107,7 +122,12 @@ function App() {
     loadTasksFromSupabase();
   }, [userEmail]);
 
-  // No longer saving tasks to localStorage - using Supabase exclusively
+  // Save guest tasks to localStorage
+  useEffect(() => {
+    if (isGuestMode) {
+      localStorage.setItem('guestTasks', JSON.stringify(tasks));
+    }
+  }, [tasks, isGuestMode]);
 
   // Save dark mode preference to localStorage
   useEffect(() => {
@@ -268,11 +288,35 @@ function App() {
   };
 
   const handleSignOut = async () => {
+    // Handle guest mode sign out
+    if (isGuestMode) {
+      localStorage.removeItem('guestMode');
+      localStorage.removeItem('guestTasks');
+      setIsGuestMode(false);
+      setUserName('');
+      setTasks([]);
+      return;
+    }
+
+    // Handle authenticated user sign out
     try {
       await supabaseService.signOut();
       // State will be updated by auth listener
     } catch (error) {
       console.error('Error signing out:', error);
+    }
+  };
+
+  const handleGuestMode = () => {
+    localStorage.setItem('guestMode', 'true');
+    setIsGuestMode(true);
+    setUserName('Guest');
+    setAuthLoading(false);
+
+    // Load any existing guest tasks
+    const savedTasks = localStorage.getItem('guestTasks');
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
     }
   };
 
@@ -318,7 +362,7 @@ function App() {
   }
 
   // Show auth screens if not authenticated
-  if (!user) {
+  if (!user && !isGuestMode) {
     if (authView === 'signup') {
       return (
         <SignUp
@@ -341,6 +385,7 @@ function App() {
         onSignInSuccess={() => {}}
         onSwitchToSignUp={() => setAuthView('signup')}
         onSwitchToReset={() => setAuthView('reset')}
+        onGuestMode={handleGuestMode}
       />
     );
   }
