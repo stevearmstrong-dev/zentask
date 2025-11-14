@@ -278,6 +278,35 @@ body {
   background: #ff3b30;
 }
 
+.voice-input-btn.add-task {
+  background: #34c759;
+  width: auto;
+  padding: 0 20px;
+  border-radius: 22px;
+  animation: successPulse 1.5s ease-in-out infinite;
+}
+
+.voice-input-btn.add-task:hover {
+  background: #30b350;
+  transform: scale(1.05);
+}
+
+.add-task-text {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(52, 199, 89, 0);
+  }
+}
+
 .mic-icon {
   display: block;
   line-height: 1;

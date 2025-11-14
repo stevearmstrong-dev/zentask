@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
+function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
+  const [speechCaptured, setSpeechCaptured] = useState(false);
   const recognitionRef = useRef(null);
   const finalTranscriptRef = useRef('');
   const isListeningRef = useRef(false);
@@ -11,13 +12,15 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
   const onTranscriptRef = useRef(onTranscript);
   const onInterimTranscriptRef = useRef(onInterimTranscript);
   const onErrorRef = useRef(onError);
+  const onAddTaskRef = useRef(onAddTask);
 
   // Update refs when callbacks change
   useEffect(() => {
     onTranscriptRef.current = onTranscript;
     onInterimTranscriptRef.current = onInterimTranscript;
     onErrorRef.current = onError;
-  }, [onTranscript, onInterimTranscript, onError]);
+    onAddTaskRef.current = onAddTask;
+  }, [onTranscript, onInterimTranscript, onError, onAddTask]);
 
   useEffect(() => {
     // Check if browser supports Speech Recognition
@@ -94,6 +97,8 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
 
       if (finalTranscriptRef.current && onTranscriptRef.current) {
         onTranscriptRef.current(finalTranscriptRef.current.trim());
+        // Set speechCaptured to true to show "Add Task" button
+        setSpeechCaptured(true);
       }
 
       finalTranscriptRef.current = '';
@@ -108,7 +113,7 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
     };
   }, []); // Empty dependencies - recognition instance doesn't need to be recreated
 
-  const toggleListening = () => {
+  const handleButtonClick = () => {
     if (!isSupported) {
       if (onErrorRef.current) {
         onErrorRef.current('Voice recognition is not supported in your browser. Please try Chrome or Edge.');
@@ -116,6 +121,16 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
       return;
     }
 
+    // If speech was captured, clicking adds the task
+    if (speechCaptured) {
+      if (onAddTaskRef.current) {
+        onAddTaskRef.current();
+      }
+      setSpeechCaptured(false);
+      return;
+    }
+
+    // Otherwise, toggle listening
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -133,6 +148,11 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
     }
   };
 
+  // Reset function to be called after task is added
+  const reset = () => {
+    setSpeechCaptured(false);
+  };
+
   if (!isSupported) {
     return null; // Don't show the button if not supported
   }
@@ -141,11 +161,13 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
     <div className="voice-input-wrapper">
       <button
         type="button"
-        className={`voice-input-btn ${isListening ? 'listening' : ''}`}
-        onClick={toggleListening}
-        title={isListening ? 'Click to stop' : 'Add task by voice'}
+        className={`voice-input-btn ${isListening ? 'listening' : ''} ${speechCaptured ? 'add-task' : ''}`}
+        onClick={handleButtonClick}
+        title={speechCaptured ? 'Click to add task' : isListening ? 'Click to stop' : 'Add task by voice'}
       >
-        {isListening ? (
+        {speechCaptured ? (
+          <span className="add-task-text">✓ Add Task</span>
+        ) : isListening ? (
           <>
             <span className="mic-icon recording">🎙️</span>
             <span className="recording-pulse"></span>
