@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-function VoiceInput({ onTranscript, onError }) {
+function VoiceInput({ onTranscript, onInterimTranscript, onError }) {
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef(null);
+  const finalTranscriptRef = useRef('');
 
   useEffect(() => {
     // Check if browser supports Speech Recognition
@@ -16,26 +17,54 @@ function VoiceInput({ onTranscript, onError }) {
 
     // Initialize speech recognition
     const recognition = new SpeechRecognition();
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true; // Keep listening
+    recognition.interimResults = true; // Get real-time results
     recognition.lang = 'en-US';
+    recognition.maxAlternatives = 1;
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      if (onTranscript) {
-        onTranscript(transcript);
+      let interimTranscript = '';
+      let finalTranscript = finalTranscriptRef.current;
+
+      // Process all results
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
       }
-      setIsListening(false);
+
+      finalTranscriptRef.current = finalTranscript;
+
+      // Send interim results for real-time feedback
+      if (interimTranscript && onInterimTranscript) {
+        onInterimTranscript(finalTranscript + interimTranscript);
+      }
+
+      // Send final transcript when we have it
+      if (finalTranscript && onTranscript) {
+        onTranscript(finalTranscript.trim());
+      }
     };
 
     recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
+
+      // Don't stop on 'no-speech' - user might just be pausing
+      if (event.error === 'no-speech') {
+        // Just continue listening
+        return;
+      }
+
       setIsListening(false);
 
       if (onError) {
         let errorMessage = 'Voice recognition failed';
-        if (event.error === 'no-speech') {
-          errorMessage = 'No speech detected. Please try again.';
+        if (event.error === 'aborted') {
+          // Intentionally stopped, no error
+          return;
         } else if (event.error === 'not-allowed') {
           errorMessage = 'Microphone access denied. Please enable it in your browser settings.';
         } else if (event.error === 'network') {
@@ -46,7 +75,14 @@ function VoiceInput({ onTranscript, onError }) {
     };
 
     recognition.onend = () => {
+      // Only stop if user manually stopped
+      if (isListening && finalTranscriptRef.current) {
+        if (onTranscript) {
+          onTranscript(finalTranscriptRef.current.trim());
+        }
+      }
       setIsListening(false);
+      finalTranscriptRef.current = '';
     };
 
     recognitionRef.current = recognition;
@@ -56,7 +92,7 @@ function VoiceInput({ onTranscript, onError }) {
         recognitionRef.current.abort();
       }
     };
-  }, [onTranscript, onError]);
+  }, [onTranscript, onInterimTranscript, onError, isListening]);
 
   const toggleListening = () => {
     if (!isSupported) {
@@ -87,21 +123,26 @@ function VoiceInput({ onTranscript, onError }) {
   }
 
   return (
-    <button
-      type="button"
-      className={`voice-input-btn ${isListening ? 'listening' : ''}`}
-      onClick={toggleListening}
-      title={isListening ? 'Stop recording' : 'Add task by voice'}
-    >
-      {isListening ? (
-        <>
-          <span className="mic-icon recording">🎙️</span>
-          <span className="recording-pulse"></span>
-        </>
-      ) : (
-        <span className="mic-icon">🎤</span>
+    <div className="voice-input-wrapper">
+      <button
+        type="button"
+        className={`voice-input-btn ${isListening ? 'listening' : ''}`}
+        onClick={toggleListening}
+        title={isListening ? 'Click to stop' : 'Add task by voice'}
+      >
+        {isListening ? (
+          <>
+            <span className="mic-icon recording">🎙️</span>
+            <span className="recording-pulse"></span>
+          </>
+        ) : (
+          <span className="mic-icon">🎤</span>
+        )}
+      </button>
+      {isListening && (
+        <span className="listening-indicator">Listening...</span>
       )}
-    </button>
+    </div>
   );
 }
 

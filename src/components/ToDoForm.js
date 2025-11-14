@@ -49,6 +49,11 @@ function ToDoForm({ addTask }) {
     setVoiceError('');
   };
 
+  const handleInterimTranscript = (transcript) => {
+    // Update input with interim results in real-time
+    setInput(transcript);
+  };
+
   const handleVoiceError = (error) => {
     setVoiceError(error);
     setTimeout(() => setVoiceError(''), 5000);
@@ -68,6 +73,7 @@ function ToDoForm({ addTask }) {
           />
           <VoiceInput
             onTranscript={handleVoiceTranscript}
+            onInterimTranscript={handleInterimTranscript}
             onError={handleVoiceError}
           />
         </div>

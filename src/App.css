@@ -216,12 +216,18 @@ body {
 }
 
 .input-with-voice .todo-input {
-  padding-right: 60px;
+  padding-right: 120px;
+}
+
+.voice-input-wrapper {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .voice-input-btn {
-  position: absolute;
-  right: 8px;
   width: 44px;
   height: 44px;
   border: none;
@@ -233,6 +239,29 @@ body {
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.listening-indicator {
+  font-size: 0.75rem;
+  color: #ff3b30;
+  font-weight: 600;
+  white-space: nowrap;
+  animation: fadeIn 0.3s ease-in;
+  padding-right: 4px;
+}
+
+.dark-mode .listening-indicator {
+  color: #ff453a;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .voice-input-btn:hover {
