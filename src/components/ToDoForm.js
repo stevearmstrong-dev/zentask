@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import CalendarPicker from './CalendarPicker';
+import CategoryPicker from './CategoryPicker';
 
 function ToDoForm({ addTask }) {
   const [input, setInput] = useState('');
@@ -76,12 +77,9 @@ function ToDoForm({ addTask }) {
           placeholder="Time"
         />
 
-        <input
-          type="text"
-          className="todo-category"
-          placeholder="Category (optional)"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+        <CategoryPicker
+          selectedCategory={category}
+          onSelectCategory={setCategory}
         />
 
         <select
