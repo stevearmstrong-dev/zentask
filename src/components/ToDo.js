@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
+import TimePicker from './TimePicker';
 
 function ToDo({ task, toggleComplete, deleteTask, editTask }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -106,11 +107,9 @@ function ToDo({ task, toggleComplete, deleteTask, editTask }) {
               onSelectDate={setEditDueDate}
               minDate=""
             />
-            <input
-              type="time"
-              className="todo-time-edit"
-              value={editDueTime}
-              onChange={(e) => setEditDueTime(e.target.value)}
+            <TimePicker
+              selectedTime={editDueTime}
+              onSelectTime={setEditDueTime}
             />
             <CategoryPicker
               selectedCategory={editCategory}
