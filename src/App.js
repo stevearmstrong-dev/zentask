@@ -11,6 +11,7 @@ import SignUp from './components/Auth/SignUp';
 import PasswordReset from './components/Auth/PasswordReset';
 import QuickAddTasks from './components/QuickAddTasks';
 import PomodoroTimer from './components/PomodoroTimer';
+import Sidebar from './components/Sidebar';
 import supabaseService from './services/supabase';
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [darkMode, setDarkMode] = useState(false);
-  const [view, setView] = useState('today'); // 'today', 'tasks', or 'dashboard'
+  const [view, setView] = useState('today'); // 'today', 'tasks', 'dashboard', or 'pomodoro'
   const [notificationPermission, setNotificationPermission] = useState('default');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [authView, setAuthView] = useState('signin'); // 'signin', 'signup', 'reset'
@@ -398,56 +399,18 @@ function App() {
         <Onboarding onComplete={handleOnboardingComplete} addTask={addTask} />
       )}
 
-      <PomodoroTimer />
+      <div className="app-layout">
+        <Sidebar
+          activeView={view}
+          onViewChange={setView}
+          userName={userName}
+          onSignOut={handleSignOut}
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(!darkMode)}
+        />
 
-      <div className="todo-container">
-        <div className="header">
-          <div className="header-left">
-            <h1 className="todo-title">ToDo App</h1>
-          </div>
-          <div className="header-controls">
-            <div className="user-info">
-              <span className="user-avatar">{userName.charAt(0).toUpperCase()}</span>
-              <span className="user-name">{userName}</span>
-            </div>
-            <button
-              className="dark-mode-toggle"
-              onClick={() => setDarkMode(!darkMode)}
-              title={darkMode ? 'Light Mode' : 'Dark Mode'}
-            >
-              {darkMode ? '☀️' : '🌙'}
-            </button>
-            <button
-              className="sign-out-button"
-              onClick={handleSignOut}
-              title="Sign Out"
-            >
-              Sign Out
-            </button>
-            <div className="view-switcher">
-              <button
-                className={view === 'today' ? 'view-btn active' : 'view-btn'}
-                onClick={() => setView('today')}
-              >
-                Today
-              </button>
-              <button
-                className={view === 'tasks' ? 'view-btn active' : 'view-btn'}
-                onClick={() => setView('tasks')}
-              >
-                All Tasks
-              </button>
-              <button
-                className={view === 'dashboard' ? 'view-btn active' : 'view-btn'}
-                onClick={() => setView('dashboard')}
-              >
-                Dashboard
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {view !== 'today' && <Greeting userName={userName} />}
+        <div className="main-content">
+          {view !== 'today' && view !== 'pomodoro' && <Greeting userName={userName} />}
 
         {view === 'today' ? (
           <>
@@ -532,9 +495,12 @@ function App() {
               </div>
             )}
           </>
+        ) : view === 'pomodoro' ? (
+          <PomodoroTimer />
         ) : (
           <Dashboard tasks={tasks} />
         )}
+        </div>
       </div>
     </div>
   );
