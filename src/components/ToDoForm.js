@@ -59,6 +59,13 @@ function ToDoForm({ addTask }) {
     setTimeout(() => setVoiceError(''), 5000);
   };
 
+  const handleVoiceAddTask = () => {
+    // Submit the form when voice "Add Task" button is clicked
+    if (input.trim()) {
+      handleSubmit({ preventDefault: () => {} });
+    }
+  };
+
   return (
     <form className="todo-form" onSubmit={handleSubmit}>
       <div className="form-row">
@@ -75,6 +82,7 @@ function ToDoForm({ addTask }) {
             onTranscript={handleVoiceTranscript}
             onInterimTranscript={handleInterimTranscript}
             onError={handleVoiceError}
+            onAddTask={handleVoiceAddTask}
           />
         </div>
         {voiceError && <p className="voice-error">{voiceError}</p>}
