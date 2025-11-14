@@ -107,7 +107,7 @@ function TimePicker({ selectedTime, onSelectTime }) {
     const adjustedValue = value === 12 ? 0 : value;
     const angle = (adjustedValue * 360) / total - 90;
     const radian = (angle * Math.PI) / 180;
-    const radius = 85;
+    const radius = 72; // Reduced from 85 to prevent circles from being cut off at edges
     const x = 100 + radius * Math.cos(radian);
     const y = 100 + radius * Math.sin(radian);
     return { x, y };
