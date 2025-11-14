@@ -3815,3 +3815,433 @@ body {
     max-width: 240px;
   }
 }
+
+/* ============================================
+   Priority Picker
+   ============================================ */
+
+.priority-picker-wrapper {
+  position: relative;
+  display: inline-block;
+  flex: 1;
+  min-width: 160px;
+}
+
+.priority-trigger {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.2);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.dark-mode .priority-trigger {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border-color: rgba(115, 171, 255, 0.25);
+  color: #f5f5f7;
+}
+
+.priority-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.15);
+}
+
+.dark-mode .priority-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.25);
+}
+
+.priority-trigger-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.priority-trigger-text {
+  flex: 1;
+}
+
+.priority-arrow {
+  font-size: 0.7rem;
+  color: #73ABFF;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.priority-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  min-width: 280px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(17, 23, 34, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  overflow: hidden;
+  animation: priorityFadeIn 0.2s ease-out;
+}
+
+.dark-mode .priority-dropdown {
+  background: rgba(17, 23, 34, 0.98);
+  border-color: rgba(115, 171, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes priorityFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.priority-header {
+  padding: 16px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.08);
+  text-align: center;
+}
+
+.dark-mode .priority-header {
+  border-bottom-color: rgba(115, 171, 255, 0.15);
+}
+
+.priority-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .priority-title {
+  color: #f5f5f7;
+}
+
+.priority-options {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.priority-option {
+  width: 100%;
+  padding: 16px;
+  background: rgba(17, 23, 34, 0.02);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+.dark-mode .priority-option {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.priority-option-low {
+  border-left: 4px solid #34C759;
+}
+
+.priority-option-medium {
+  border-left: 4px solid #FFB800;
+}
+
+.priority-option-high {
+  border-left: 4px solid #FF3B30;
+}
+
+.priority-option:hover {
+  background: rgba(115, 171, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.priority-option.selected {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  border-right: 2px solid #73ABFF;
+}
+
+.priority-option-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.priority-option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.priority-option-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .priority-option-label {
+  color: #f5f5f7;
+}
+
+.priority-option-description {
+  font-size: 0.8rem;
+  color: #86868b;
+}
+
+.dark-mode .priority-option-description {
+  color: #98989d;
+}
+
+.priority-check {
+  font-size: 1.2rem;
+  color: #73ABFF;
+  flex-shrink: 0;
+}
+
+/* Priority Picker Form Integration */
+.form-options .priority-picker-wrapper {
+  flex: 1;
+  min-width: 160px;
+}
+
+.edit-options .priority-picker-wrapper {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ============================================
+   Reminder Picker
+   ============================================ */
+
+.reminder-picker-wrapper {
+  position: relative;
+  display: inline-block;
+  flex: 1;
+  min-width: 160px;
+}
+
+.reminder-trigger {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.2);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+}
+
+.dark-mode .reminder-trigger {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border-color: rgba(115, 171, 255, 0.25);
+  color: #f5f5f7;
+}
+
+.reminder-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.15);
+}
+
+.dark-mode .reminder-trigger:hover {
+  border-color: rgba(115, 171, 255, 0.4);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  box-shadow: 0 4px 12px rgba(115, 171, 255, 0.25);
+}
+
+.reminder-trigger-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.reminder-trigger-text {
+  flex: 1;
+}
+
+.reminder-arrow {
+  font-size: 0.7rem;
+  color: #73ABFF;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.reminder-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  min-width: 240px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(17, 23, 34, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  overflow: hidden;
+  animation: reminderFadeIn 0.2s ease-out;
+}
+
+.dark-mode .reminder-dropdown {
+  background: rgba(17, 23, 34, 0.98);
+  border-color: rgba(115, 171, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes reminderFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reminder-header {
+  padding: 16px;
+  border-bottom: 1px solid rgba(17, 23, 34, 0.08);
+  text-align: center;
+}
+
+.dark-mode .reminder-header {
+  border-bottom-color: rgba(115, 171, 255, 0.15);
+}
+
+.reminder-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .reminder-title {
+  color: #f5f5f7;
+}
+
+.reminder-options {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.reminder-option {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(17, 23, 34, 0.02);
+  border: 1px solid rgba(115, 171, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+}
+
+.dark-mode .reminder-option {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(115, 171, 255, 0.15);
+}
+
+.reminder-option:hover {
+  background: rgba(115, 171, 255, 0.08);
+  border-color: rgba(115, 171, 255, 0.3);
+  transform: translateX(4px);
+}
+
+.reminder-option.selected {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  border-color: #73ABFF;
+}
+
+.reminder-option-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.reminder-option-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reminder-option-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .reminder-option-label {
+  color: #f5f5f7;
+}
+
+.reminder-option-description {
+  font-size: 0.75rem;
+  color: #86868b;
+}
+
+.dark-mode .reminder-option-description {
+  color: #98989d;
+}
+
+.reminder-check {
+  font-size: 1.1rem;
+  color: #73ABFF;
+  flex-shrink: 0;
+}
+
+/* Reminder Picker Form Integration */
+.form-options .reminder-picker-wrapper {
+  flex: 1;
+  min-width: 160px;
+}
+
+.edit-options .reminder-picker-wrapper {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-options .priority-picker-wrapper,
+  .form-options .reminder-picker-wrapper,
+  .edit-options .priority-picker-wrapper,
+  .edit-options .reminder-picker-wrapper {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .priority-dropdown,
+  .reminder-dropdown {
+    max-width: 100%;
+  }
+}

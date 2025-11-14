@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
+import PriorityPicker from './PriorityPicker';
+import ReminderPicker from './ReminderPicker';
 
 function ToDo({ task, toggleComplete, deleteTask, editTask }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -93,15 +95,10 @@ function ToDo({ task, toggleComplete, deleteTask, editTask }) {
             onKeyPress={(e) => e.key === 'Enter' && handleEdit()}
           />
           <div className="edit-options">
-            <select
-              className="todo-select-edit"
-              value={editPriority}
-              onChange={(e) => setEditPriority(e.target.value)}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
+            <PriorityPicker
+              selectedPriority={editPriority}
+              onSelectPriority={setEditPriority}
+            />
             <CalendarPicker
               selectedDate={editDueDate}
               onSelectDate={setEditDueDate}
@@ -115,18 +112,10 @@ function ToDo({ task, toggleComplete, deleteTask, editTask }) {
               selectedCategory={editCategory}
               onSelectCategory={setEditCategory}
             />
-            <select
-              className="todo-select-edit"
-              value={editReminderMinutes}
-              onChange={(e) => setEditReminderMinutes(e.target.value)}
-            >
-              <option value="">No Reminder</option>
-              <option value="5">5 min before</option>
-              <option value="15">15 min before</option>
-              <option value="30">30 min before</option>
-              <option value="60">1 hour before</option>
-              <option value="1440">1 day before</option>
-            </select>
+            <ReminderPicker
+              selectedReminder={editReminderMinutes}
+              onSelectReminder={setEditReminderMinutes}
+            />
           </div>
           <div className="todo-edit-actions">
             <button className="btn-save" onClick={handleEdit}>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
+import PriorityPicker from './PriorityPicker';
+import ReminderPicker from './ReminderPicker';
 
 function ToDoForm({ addTask }) {
   const [input, setInput] = useState('');
@@ -54,15 +56,10 @@ function ToDoForm({ addTask }) {
       </div>
 
       <div className="form-row form-options">
-        <select
-          className="todo-select priority-select"
-          value={priority}
-          onChange={(e) => setPriority(e.target.value)}
-        >
-          <option value="low">Low Priority</option>
-          <option value="medium">Medium Priority</option>
-          <option value="high">High Priority</option>
-        </select>
+        <PriorityPicker
+          selectedPriority={priority}
+          onSelectPriority={setPriority}
+        />
 
         <CalendarPicker
           selectedDate={dueDate}
@@ -80,18 +77,10 @@ function ToDoForm({ addTask }) {
           onSelectCategory={setCategory}
         />
 
-        <select
-          className="todo-select reminder-select"
-          value={reminderMinutes}
-          onChange={(e) => setReminderMinutes(e.target.value)}
-        >
-          <option value="">No Reminder</option>
-          <option value="5">5 min before</option>
-          <option value="15">15 min before</option>
-          <option value="30">30 min before</option>
-          <option value="60">1 hour before</option>
-          <option value="1440">1 day before</option>
-        </select>
+        <ReminderPicker
+          selectedReminder={reminderMinutes}
+          onSelectReminder={setReminderMinutes}
+        />
 
         <button type="submit" className="todo-button">
           Add Task
