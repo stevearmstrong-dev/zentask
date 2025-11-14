@@ -4,6 +4,7 @@ import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
 import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
+import VoiceInput from './VoiceInput';
 
 function ToDoForm({ addTask }) {
   const [input, setInput] = useState('');
@@ -12,6 +13,7 @@ function ToDoForm({ addTask }) {
   const [dueTime, setDueTime] = useState('');
   const [category, setCategory] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('15');
+  const [voiceError, setVoiceError] = useState('');
 
   // Get today's date in local timezone (YYYY-MM-DD format)
   const getTodayLocalDate = () => {
@@ -42,17 +44,34 @@ function ToDoForm({ addTask }) {
     }
   };
 
+  const handleVoiceTranscript = (transcript) => {
+    setInput(transcript);
+    setVoiceError('');
+  };
+
+  const handleVoiceError = (error) => {
+    setVoiceError(error);
+    setTimeout(() => setVoiceError(''), 5000);
+  };
+
   return (
     <form className="todo-form" onSubmit={handleSubmit}>
       <div className="form-row">
-        <input
-          type="text"
-          className="todo-input"
-          placeholder="Add a new task..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          required
-        />
+        <div className="input-with-voice">
+          <input
+            type="text"
+            className="todo-input"
+            placeholder="Add a new task..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            required
+          />
+          <VoiceInput
+            onTranscript={handleVoiceTranscript}
+            onError={handleVoiceError}
+          />
+        </div>
+        {voiceError && <p className="voice-error">{voiceError}</p>}
       </div>
 
       <div className="form-row form-options">
