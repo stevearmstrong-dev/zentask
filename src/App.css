@@ -4954,6 +4954,15 @@ body {
 .recurrence-picker .picker-button {
   min-width: 180px;
   justify-content: space-between;
+  background: white;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  color: #1d1d1f;
+}
+
+.dark-mode .recurrence-picker .picker-button {
+  background: #2a2f3d;
+  border-color: rgba(115, 171, 255, 0.2);
+  color: #f5f5f7;
 }
 
 .recurrence-dropdown {
