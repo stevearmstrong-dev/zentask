@@ -32,6 +32,7 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 - **Priority Levels**: High, medium, and low priority with visual indicators
 - **Scheduling**: Set due dates and specific times for tasks
 - **Categories**: Organize tasks with custom categories
+- **Recurring Tasks**: Daily, weekly, biweekly, monthly, and yearly auto-regeneration
 - **Search & Filter**: Search by text/category and filter by status (all, active, completed)
 - **Overdue Detection**: Automatic detection and warnings for overdue tasks
 - **Task Operations**: Create, edit, delete, and mark tasks complete
@@ -49,11 +50,13 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 ### User Experience
 
 - **Dark Mode**: Beautiful dark theme with preference persistence
+- **Unified Blue Theme**: Cohesive blue-tinted design across all UI elements
 - **Responsive Design**: Seamless experience on desktop, tablet, and mobile
 - **Sidebar Navigation**: Professional sidebar with user profile and quick controls
 - **Onboarding**: Interactive tutorial for new users
 - **Progress Tracking**: Visual indicators for daily goals and completion rates
-- **Apple-Inspired Design**: Clean, minimal interface with smooth animations
+- **Glassmorphic Design**: Modern blur effects and gradient backgrounds
+- **Smooth Animations**: Polished hover effects and transitions throughout
 
 ## Technologies Used
 
