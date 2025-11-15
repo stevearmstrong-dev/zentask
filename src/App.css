@@ -5249,6 +5249,10 @@ body {
   margin: 0 auto;
   padding: 24px;
   animation: fadeIn 0.3s ease-in;
+  height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .matrix-header {
@@ -5289,6 +5293,8 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   margin-bottom: 32px;
+  flex: 1;
+  overflow: hidden;
 }
 
 @media (max-width: 1024px) {
@@ -5303,12 +5309,12 @@ body {
   border: 2px solid rgba(115, 171, 255, 0.2);
   border-radius: 16px;
   padding: 24px;
-  min-height: 300px;
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
 .dark-mode .matrix-quadrant {
@@ -5438,8 +5444,8 @@ body {
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  max-height: 500px;
   padding-right: 4px;
+  min-height: 0;
 }
 
 .quadrant-tasks::-webkit-scrollbar {
