@@ -1,10 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Priority } from '../types';
 
-function PriorityPicker({ selectedPriority, onSelectPriority }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef(null);
+interface PriorityPickerProps {
+  selectedPriority: Priority;
+  onSelectPriority: (priority: Priority) => void;
+}
 
-  const priorities = [
+interface PriorityOption {
+  value: Priority;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+function PriorityPicker({ selectedPriority, onSelectPriority }: PriorityPickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  const priorities: PriorityOption[] = [
     { value: 'low', label: 'Low', icon: '🟢', description: 'No rush' },
     { value: 'medium', label: 'Medium', icon: '🟡', description: 'Moderate importance' },
     { value: 'high', label: 'High', icon: '🔴', description: 'Urgent' },
@@ -12,8 +25,8 @@ function PriorityPicker({ selectedPriority, onSelectPriority }) {
 
   // Close picker when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -27,12 +40,12 @@ function PriorityPicker({ selectedPriority, onSelectPriority }) {
     };
   }, [isOpen]);
 
-  const handleSelect = (value) => {
+  const handleSelect = (value: Priority): void => {
     onSelectPriority(value);
     setIsOpen(false);
   };
 
-  const getDisplayInfo = () => {
+  const getDisplayInfo = (): PriorityOption => {
     const priority = priorities.find(p => p.value === selectedPriority);
     return priority || priorities[1]; // Default to medium
   };

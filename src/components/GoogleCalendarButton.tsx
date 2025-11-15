@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import googleCalendarService from '../services/googleCalendar';
 
-function GoogleCalendarButton({ onSignInChange }) {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true);
-  const [userProfile, setUserProfile] = useState(null);
+interface UserProfile {
+  email: string;
+  name?: string;
+}
+
+interface GoogleCalendarButtonProps {
+  onSignInChange: (isSignedIn: boolean) => void;
+}
+
+function GoogleCalendarButton({ onSignInChange }: GoogleCalendarButtonProps) {
+  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const [isInitializing, setIsInitializing] = useState<boolean>(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     // Initialize Google API on component mount
@@ -25,7 +34,7 @@ function GoogleCalendarButton({ onSignInChange }) {
       });
   }, [onSignInChange]);
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (): Promise<void> => {
     try {
       await googleCalendarService.signIn();
       setIsSignedIn(true);
@@ -37,7 +46,7 @@ function GoogleCalendarButton({ onSignInChange }) {
     }
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (): Promise<void> => {
     try {
       await googleCalendarService.signOut();
       setIsSignedIn(false);

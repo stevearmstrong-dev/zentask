@@ -1,12 +1,21 @@
 import React from 'react';
+import { Task } from '../types';
 import ToDo from './ToDo';
 
-function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }) {
+interface TodayViewProps {
+  tasks: Task[];
+  toggleComplete: (id: number) => void;
+  deleteTask: (id: number) => void;
+  editTask: (id: number, updates: Partial<Task>) => void;
+  onUpdateTime: (id: number, timeSpent: number) => void;
+}
+
+function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }: TodayViewProps) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   // Helper function to parse task date in local timezone
-  const getTaskDate = (task) => {
+  const getTaskDate = (task: Task): Date | null => {
     if (!task.dueDate) return null;
     // Parse date string (YYYY-MM-DD) in local timezone to avoid UTC conversion issues
     const [year, month, day] = task.dueDate.split('-').map(Number);
@@ -17,21 +26,21 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }
   const overdueTasks = tasks.filter(task => {
     if (task.completed || !task.dueDate) return false;
     const taskDate = getTaskDate(task);
-    return taskDate < today;
+    return taskDate! < today;
   });
 
   // Filter today's tasks (due today and not completed)
   const todayTasks = tasks.filter(task => {
     if (task.completed || !task.dueDate) return false;
     const taskDate = getTaskDate(task);
-    return taskDate.getTime() === today.getTime();
+    return taskDate!.getTime() === today.getTime();
   });
 
   // Filter completed tasks from today
   const completedTodayTasks = tasks.filter(task => {
     if (!task.completed || !task.dueDate) return false;
     const taskDate = getTaskDate(task);
-    return taskDate.getTime() === today.getTime();
+    return taskDate!.getTime() === today.getTime();
   });
 
   // Calculate progress
@@ -42,8 +51,8 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }
     : 0;
 
   // Format date
-  const formatDate = () => {
-    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+  const formatDate = (): string => {
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
     return today.toLocaleDateString('en-US', options);
   };
 
@@ -110,7 +119,6 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }
                 deleteTask={deleteTask}
                 editTask={editTask}
                 onUpdateTime={onUpdateTime}
-                isOverdue={true}
               />
             ))}
           </div>

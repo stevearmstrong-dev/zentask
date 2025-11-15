@@ -1,12 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-function TimePicker({ selectedTime, onSelectTime }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [hour, setHour] = useState(12);
-  const [minute, setMinute] = useState(0);
-  const [period, setPeriod] = useState('PM');
-  const [selectingMinutes, setSelectingMinutes] = useState(false);
-  const timePickerRef = useRef(null);
+interface TimePickerProps {
+  selectedTime?: string;
+  onSelectTime: (time: string) => void;
+}
+
+interface ClockPosition {
+  x: number;
+  y: number;
+}
+
+function TimePicker({ selectedTime, onSelectTime }: TimePickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [hour, setHour] = useState<number>(12);
+  const [minute, setMinute] = useState<number>(0);
+  const [period, setPeriod] = useState<'AM' | 'PM'>('PM');
+  const [selectingMinutes, setSelectingMinutes] = useState<boolean>(false);
+  const timePickerRef = useRef<HTMLDivElement>(null);
 
   // Initialize from selectedTime prop
   useEffect(() => {
@@ -14,7 +24,7 @@ function TimePicker({ selectedTime, onSelectTime }) {
       const [hours, minutes] = selectedTime.split(':');
       const hourNum = parseInt(hours);
       const displayHour = hourNum === 0 ? 12 : hourNum > 12 ? hourNum - 12 : hourNum;
-      const displayPeriod = hourNum >= 12 ? 'PM' : 'AM';
+      const displayPeriod: 'AM' | 'PM' = hourNum >= 12 ? 'PM' : 'AM';
 
       setHour(displayHour);
       setMinute(parseInt(minutes));
@@ -24,8 +34,8 @@ function TimePicker({ selectedTime, onSelectTime }) {
 
   // Close time picker when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (timePickerRef.current && !timePickerRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timePickerRef.current && !timePickerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setSelectingMinutes(false);
       }
@@ -40,7 +50,7 @@ function TimePicker({ selectedTime, onSelectTime }) {
     };
   }, [isOpen]);
 
-  const formatDisplayTime = (timeString) => {
+  const formatDisplayTime = (timeString?: string): string => {
     if (!timeString) return 'Select time';
     const [hours, minutes] = timeString.split(':');
     const hourNum = parseInt(hours);
@@ -49,16 +59,16 @@ function TimePicker({ selectedTime, onSelectTime }) {
     return `${displayHour}:${String(minutes).padStart(2, '0')} ${ampm}`;
   };
 
-  const handleHourClick = (selectedHour) => {
+  const handleHourClick = (selectedHour: number): void => {
     setHour(selectedHour);
     setSelectingMinutes(true);
   };
 
-  const handleMinuteClick = (selectedMinute) => {
+  const handleMinuteClick = (selectedMinute: number): void => {
     setMinute(selectedMinute);
   };
 
-  const applyTime = (h = hour, m = minute, p = period) => {
+  const applyTime = (h: number = hour, m: number = minute, p: 'AM' | 'PM' = period): void => {
     let hours = h;
     if (p === 'PM' && hours !== 12) {
       hours += 12;
@@ -72,22 +82,22 @@ function TimePicker({ selectedTime, onSelectTime }) {
     setSelectingMinutes(false);
   };
 
-  const handleApply = () => {
+  const handleApply = (): void => {
     applyTime();
   };
 
-  const handleClear = () => {
+  const handleClear = (): void => {
     onSelectTime('');
     setIsOpen(false);
     setSelectingMinutes(false);
   };
 
-  const handleBack = () => {
+  const handleBack = (): void => {
     setSelectingMinutes(false);
   };
 
   // Generate clock positions for hours (12 numbers in a circle)
-  const getClockPosition = (value, total = 12) => {
+  const getClockPosition = (value: number, total: number = 12): ClockPosition => {
     // Adjust for 12-hour clock (12 should be at top, not 0)
     const adjustedValue = value === 12 ? 0 : value;
     const angle = (adjustedValue * 360) / total - 90;

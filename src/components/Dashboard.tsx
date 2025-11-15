@@ -1,10 +1,25 @@
 import React from 'react';
 import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Pie, Bar, Doughnut } from 'react-chartjs-2';
+import { Task } from '../types';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function Dashboard({ tasks }) {
+interface DashboardProps {
+  tasks: Task[];
+}
+
+interface CategoryCount {
+  [key: string]: number;
+}
+
+interface TimeByPriority {
+  high: number;
+  medium: number;
+  low: number;
+}
+
+function Dashboard({ tasks }: DashboardProps) {
   // Calculate statistics
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(task => task.completed).length;
@@ -26,7 +41,7 @@ function Dashboard({ tasks }) {
   }).length;
 
   // Category breakdown
-  const categoryCount = {};
+  const categoryCount: CategoryCount = {};
   tasks.forEach(task => {
     if (task.category && !task.completed) {
       categoryCount[task.category] = (categoryCount[task.category] || 0) + 1;
@@ -46,7 +61,7 @@ function Dashboard({ tasks }) {
 
   // Time tracking statistics
   const totalTimeSpent = tasks.reduce((total, task) => total + (task.timeSpent || 0), 0);
-  const formatTotalTime = (seconds) => {
+  const formatTotalTime = (seconds: number): string => {
     if (seconds < 60) return `${seconds}s`;
     if (seconds < 3600) {
       const mins = Math.floor(seconds / 60);
@@ -58,14 +73,14 @@ function Dashboard({ tasks }) {
   };
 
   // Time by priority
-  const timeByPriority = {
+  const timeByPriority: TimeByPriority = {
     high: tasks.filter(t => t.priority === 'high').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
     medium: tasks.filter(t => t.priority === 'medium').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
     low: tasks.filter(t => t.priority === 'low').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
   };
 
   // Convert seconds to hours for chart display
-  const secondsToHours = (seconds) => (seconds / 3600).toFixed(1);
+  const secondsToHours = (seconds: number): string => (seconds / 3600).toFixed(1);
 
   // Time tracking chart data
   const timeTrackingChartData = {
@@ -136,7 +151,7 @@ function Dashboard({ tasks }) {
     maintainAspectRatio: true,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: 'bottom' as const,
       },
     },
   };

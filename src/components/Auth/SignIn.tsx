@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
 import { supabase } from '../../services/supabase';
+import { User } from '@supabase/supabase-js';
 
-function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMode }) {
-  const [formData, setFormData] = useState({
+interface SignInProps {
+  onSignInSuccess?: (user: User) => void;
+  onSwitchToSignUp?: () => void;
+  onSwitchToReset?: () => void;
+  onGuestMode?: () => void;
+}
+
+interface FormData {
+  email: string;
+  password: string;
+}
+
+function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMode }: SignInProps) {
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     if (!formData.email.trim()) {
       setError('Please enter your email');
       return false;
@@ -29,7 +42,7 @@ function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMod
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError('');
 
@@ -54,11 +67,11 @@ function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMod
       });
 
       // Call success callback
-      if (onSignInSuccess) {
+      if (onSignInSuccess && data.user) {
         onSignInSuccess(data.user);
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error signing in:', error);
 
       if (error.message.includes('Email not confirmed')) {
@@ -73,7 +86,7 @@ function SignIn({ onSignInSuccess, onSwitchToSignUp, onSwitchToReset, onGuestMod
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value

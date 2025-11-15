@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
+import { Task, Recurrence } from './types';
 import ToDoForm from './components/ToDoForm';
 import ToDo from './components/ToDo';
 import Dashboard from './components/Dashboard';
@@ -13,23 +14,28 @@ import QuickAddTasks from './components/QuickAddTasks';
 import PomodoroTimer from './components/PomodoroTimer';
 import EisenhowerMatrix from './components/EisenhowerMatrix';
 import Sidebar from './components/Sidebar';
+import { ViewType } from './components/Sidebar';
 import supabaseService from './services/supabase';
+import { User } from '@supabase/supabase-js';
+
+type FilterType = 'all' | 'active' | 'completed';
+type AuthViewType = 'signin' | 'signup' | 'reset';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [filter, setFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
-  const [view, setView] = useState('today'); // 'today', 'tasks', 'dashboard', or 'pomodoro'
-  const [notificationPermission, setNotificationPermission] = useState('default');
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [authView, setAuthView] = useState('signin'); // 'signin', 'signup', 'reset'
-  const [user, setUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true);
-  const [userName, setUserName] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [isGuestMode, setIsGuestMode] = useState(false);
-  const notifiedTasksRef = useRef(new Set());
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [view, setView] = useState<ViewType>('today');
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const [authView, setAuthView] = useState<AuthViewType>('signin');
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState<boolean>(true);
+  const [userName, setUserName] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>('');
+  const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
+  const notifiedTasksRef = useRef<Set<string>>(new Set());
 
   // Request notification permission
   useEffect(() => {
@@ -63,8 +69,8 @@ function App() {
     supabaseService.getCurrentUser().then((currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        setUserEmail(currentUser.email);
-        setUserName(currentUser.user_metadata?.name || currentUser.email.split('@')[0]);
+        setUserEmail(currentUser.email || '');
+        setUserName(currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || '');
       }
       setAuthLoading(false);
     });
@@ -73,8 +79,8 @@ function App() {
     const { data: authListener } = supabaseService.getAuthStateChangeListener((event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
-        setUserEmail(session.user.email);
-        setUserName(session.user.user_metadata?.name || session.user.email.split('@')[0]);
+        setUserEmail(session.user.email || '');
+        setUserName(session.user.user_metadata?.name || session.user.email?.split('@')[0] || '');
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setUserEmail('');
@@ -93,7 +99,7 @@ function App() {
 
   // Load initial preferences from localStorage
   useEffect(() => {
-    const loadInitialData = async () => {
+    const loadInitialData = async (): Promise<void> => {
       // Load dark mode preference
       const savedDarkMode = localStorage.getItem('darkMode');
       if (savedDarkMode) {
@@ -114,7 +120,7 @@ function App() {
 
   // Load tasks from Supabase when user signs in
   useEffect(() => {
-    const loadTasksFromSupabase = async () => {
+    const loadTasksFromSupabase = async (): Promise<void> => {
       if (userEmail) {
         const dbTasks = await supabaseService.fetchTasks(userEmail);
         const appTasks = dbTasks.map(task => supabaseService.convertToAppFormat(task));
@@ -139,7 +145,7 @@ function App() {
 
   // Check for reminders every minute
   useEffect(() => {
-    const checkReminders = () => {
+    const checkReminders = (): void => {
       const now = new Date();
 
       tasks.forEach(task => {
@@ -174,7 +180,7 @@ function App() {
     return () => clearInterval(interval);
   }, [tasks, notificationPermission]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const showNotification = (task) => {
+  const showNotification = (task: Task): void => {
     if (notificationPermission === 'granted') {
       const notification = new Notification('Task Reminder', {
         body: `${task.text}${task.dueTime ? ` at ${task.dueTime}` : ''}`,
@@ -192,7 +198,7 @@ function App() {
   };
 
   // Calculate next occurrence date based on recurrence pattern
-  const getNextOccurrenceDate = (currentDate, recurrence) => {
+  const getNextOccurrenceDate = (currentDate: string, recurrence: Recurrence): string | null => {
     if (!recurrence || !currentDate) return null;
 
     const [year, month, day] = currentDate.split('-').map(Number);
@@ -224,10 +230,10 @@ function App() {
     return `${nextYear}-${nextMonth}-${nextDay}`;
   };
 
-  const addTask = async (taskData) => {
-    const newTask = {
+  const addTask = async (taskData: Partial<Task>): Promise<void> => {
+    const newTask: Task = {
       id: Date.now(),
-      text: taskData.text,
+      text: taskData.text || '',
       completed: false,
       priority: taskData.priority || 'medium',
       dueDate: taskData.dueDate || '',
@@ -252,7 +258,7 @@ function App() {
     setTasks([newTask, ...tasks]);
   };
 
-  const toggleComplete = async (id) => {
+  const toggleComplete = async (id: number): Promise<void> => {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
 
@@ -262,7 +268,7 @@ function App() {
     if (!task.completed && task.recurrence && updatedTask.completed) {
       const nextDate = getNextOccurrenceDate(task.dueDate, task.recurrence);
       if (nextDate) {
-        const nextTask = {
+        const nextTask: Task = {
           id: Date.now() + 1, // Ensure unique ID
           text: task.text,
           completed: false,
@@ -317,7 +323,7 @@ function App() {
     );
   };
 
-  const deleteTask = async (id) => {
+  const deleteTask = async (id: number): Promise<void> => {
     // Delete from Supabase if user is signed in
     if (userEmail) {
       try {
@@ -330,9 +336,9 @@ function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  const editTask = async (id, updatedData) => {
+  const editTask = async (id: number, updatedData: Partial<Task>): Promise<void> => {
     const task = tasks.find((t) => t.id === id);
-    const updatedTask = { ...task, ...updatedData };
+    const updatedTask = { ...task, ...updatedData } as Task;
 
     // Update in Supabase if user is signed in
     if (userEmail) {
@@ -350,7 +356,7 @@ function App() {
     );
   };
 
-  const updateTaskTime = async (id, timeData) => {
+  const updateTaskTime = async (id: number, timeData: Partial<Task>): Promise<void> => {
     // If starting tracking, stop all other tasks
     if (timeData.isTracking) {
       const updatedTasks = tasks.map((task) => {
@@ -359,8 +365,8 @@ function App() {
           return { ...task, ...timeData };
         } else if (task.isTracking) {
           // Stop tracking other tasks
-          const elapsed = Math.floor((Date.now() - task.trackingStartTime) / 1000);
-          const stoppedTask = {
+          const elapsed = Math.floor((Date.now() - (task.trackingStartTime || 0)) / 1000);
+          const stoppedTask: Task = {
             ...task,
             timeSpent: (task.timeSpent || 0) + elapsed,
             isTracking: false,
@@ -383,7 +389,7 @@ function App() {
     } else {
       // Just update the specific task (stopping or resetting)
       const task = tasks.find((t) => t.id === id);
-      const updatedTask = { ...task, ...timeData };
+      const updatedTask = { ...task, ...timeData } as Task;
 
       setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
     }
@@ -391,7 +397,7 @@ function App() {
     // Update in Supabase
     if (userEmail) {
       const task = tasks.find((t) => t.id === id);
-      const updatedTask = { ...task, ...timeData };
+      const updatedTask = { ...task, ...timeData } as Task;
 
       try {
         await supabaseService.updateTask(id, updatedTask, userEmail);
@@ -401,7 +407,7 @@ function App() {
     }
   };
 
-  const clearCompleted = async () => {
+  const clearCompleted = async (): Promise<void> => {
     // Delete from Supabase if user is signed in
     if (userEmail) {
       try {
@@ -414,14 +420,14 @@ function App() {
     setTasks(tasks.filter((task) => !task.completed));
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (): void => {
     if (user) {
       localStorage.setItem(`hasCompletedOnboarding_${user.id}`, 'true');
     }
     setShowOnboarding(false);
   };
 
-  const handleSignOut = async () => {
+  const handleSignOut = async (): Promise<void> => {
     // Handle guest mode sign out
     if (isGuestMode) {
       localStorage.removeItem('guestMode');
@@ -441,7 +447,7 @@ function App() {
     }
   };
 
-  const handleGuestMode = () => {
+  const handleGuestMode = (): void => {
     localStorage.setItem('guestMode', 'true');
     setIsGuestMode(true);
     setUserName('Guest');
@@ -454,7 +460,7 @@ function App() {
     }
   };
 
-  const getFilteredTasks = () => {
+  const getFilteredTasks = (): Task[] => {
     let filtered = tasks;
 
     // Apply status filter

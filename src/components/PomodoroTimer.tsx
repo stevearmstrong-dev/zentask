@@ -1,23 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { PomodoroMode } from '../types';
 
 function PomodoroTimer() {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
-  const [isActive, setIsActive] = useState(false);
-  const [mode, setMode] = useState('work'); // 'work', 'shortBreak', 'longBreak'
-  const [sessions, setSessions] = useState(0);
-  const [showSettings, setShowSettings] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number>(25 * 60); // 25 minutes in seconds
+  const [isActive, setIsActive] = useState<boolean>(false);
+  const [mode, setMode] = useState<PomodoroMode>('work');
+  const [sessions, setSessions] = useState<number>(0);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   // Customizable durations (in minutes)
-  const [workDuration, setWorkDuration] = useState(25);
-  const [shortBreakDuration, setShortBreakDuration] = useState(5);
-  const [longBreakDuration, setLongBreakDuration] = useState(15);
+  const [workDuration, setWorkDuration] = useState<number>(25);
+  const [shortBreakDuration, setShortBreakDuration] = useState<number>(5);
+  const [longBreakDuration, setLongBreakDuration] = useState<number>(15);
 
-  const intervalRef = useRef(null);
-  const audioRef = useRef(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Create audio element for notifications
-    audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYGGGm98OScTQwOUKzn77RnHAU0jdXzzn0vBSh+zPLaizsIGGS57OihUBELTKXh8bllHQYuhM/z1YU2BhVns+znm08MClCq5O+zaBwGM4rT8s+AMAYnfcvx2Ik5BxdlvO7mnE4LDE6k4PG2ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6Fz/PWhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTKPg8bdlHAUuhdDz1YU2BhVos+vkl1AMCk+m4/C0ZhwGMonS89CDMAcmfMvx2Ik5BxdlvO7mnU4LDE2j4PG3ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6Fz/PWhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTKPg8bdlHAUuhdDz1YU2BhVos+vkl1AMCk+m4/C0ZhwFMonS89CDMAcmfMvx2Ik5BxdlvO7mnU4LDE2j4PG3ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6F0PPVhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTKPg8bdlHAUuhdDz1YU2BhVos+vkl1AMCk+m4/C0ZhwFMonS89CDMAcmfMvx2Ik5BxdlvO7mnU4LDE2j4PG3ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6F0PPVhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTaPg8bdlHAVDV9'); // Simple beep sound
+    audioRef.current = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYGGGm98OScTQwOUKzn77RnHAU0jdXzzn0vBSh+zPLaizsIGGS57OihUBELTKXh8bllHQYuhM/z1YU2BhVns+znm08MClCq5O+zaBwGM4rT8s+AMAYnfcvx2Ik5BxdlvO7mnE4LDE6k4PG2ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6Fz/PWhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTKPg8bdlHAUuhdDz1YU2BhVos+vkl1AMCk+m4/C0ZhwGMonS89CDMAcmfMvx2Ik5BxdlvO7mnU4LDE2j4PG3ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6Fz/PWhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTKPg8bdlHAUuhdDz1YU2BhVos+vkl1AMCk+m4/C0ZhwFMonS89CDMAcmfMvx2Ik5BxdlvO7mnU4LDE2j4PG3ZRwFLoXQ89WFNgYVaLPr5JdQDApPpuPwtGYcBTKJ0vPQgzAHJnzL8diJOQcXZbzu5p1OCwxMo+Dxt2UcBS6F0PPVhTYGFWiz6+SXUAwKT6bj8LRmHAUyidLz0IMwByZ8y/HYiTkHF2W87uadTgsMTaPg8bdlHAVDV9'); // Simple beep sound
   }, []);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ function PomodoroTimer() {
     };
   }, [isActive, timeLeft]);
 
-  const handleTimerComplete = () => {
+  const handleTimerComplete = (): void => {
     setIsActive(false);
 
     // Play notification sound
@@ -55,14 +56,14 @@ function PomodoroTimer() {
     // Auto-switch to next mode
     if (mode === 'work') {
       setSessions(prev => prev + 1);
-      const nextMode = (sessions + 1) % 4 === 0 ? 'longBreak' : 'shortBreak';
+      const nextMode: PomodoroMode = (sessions + 1) % 4 === 0 ? 'longBreak' : 'shortBreak';
       switchMode(nextMode);
     } else {
       switchMode('work');
     }
   };
 
-  const switchMode = (newMode) => {
+  const switchMode = (newMode: PomodoroMode): void => {
     setMode(newMode);
     setIsActive(false);
 
@@ -81,11 +82,11 @@ function PomodoroTimer() {
     }
   };
 
-  const toggleTimer = () => {
+  const toggleTimer = (): void => {
     setIsActive(!isActive);
   };
 
-  const resetTimer = () => {
+  const resetTimer = (): void => {
     setIsActive(false);
     switch (mode) {
       case 'work':
@@ -102,20 +103,20 @@ function PomodoroTimer() {
     }
   };
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const getProgress = () => {
+  const getProgress = (): number => {
     const total = mode === 'work' ? workDuration * 60
                  : mode === 'shortBreak' ? shortBreakDuration * 60
                  : longBreakDuration * 60;
     return ((total - timeLeft) / total) * 100;
   };
 
-  const getModeColor = () => {
+  const getModeColor = (): string => {
     switch (mode) {
       case 'work': return '#73ABFF';
       case 'shortBreak': return '#34C759';
@@ -124,7 +125,7 @@ function PomodoroTimer() {
     }
   };
 
-  const getModeLabel = () => {
+  const getModeLabel = (): string => {
     switch (mode) {
       case 'work': return 'Focus Time';
       case 'shortBreak': return 'Short Break';

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Priority, Recurrence } from '../types';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
@@ -7,18 +8,32 @@ import ReminderPicker from './ReminderPicker';
 import RecurrencePicker from './RecurrencePicker';
 import VoiceInput from './VoiceInput';
 
-function ToDoForm({ addTask }) {
-  const [input, setInput] = useState('');
-  const [priority, setPriority] = useState('medium');
-  const [dueDate, setDueDate] = useState('');
-  const [dueTime, setDueTime] = useState('');
-  const [category, setCategory] = useState('');
-  const [reminderMinutes, setReminderMinutes] = useState('15');
-  const [recurrence, setRecurrence] = useState(null);
-  const [voiceError, setVoiceError] = useState('');
+interface NewTask {
+  text: string;
+  priority: Priority;
+  dueDate: string;
+  dueTime: string;
+  category: string;
+  reminderMinutes: number | null;
+  recurrence: Recurrence | null;
+}
+
+interface ToDoFormProps {
+  addTask: (task: NewTask) => void;
+}
+
+function ToDoForm({ addTask }: ToDoFormProps) {
+  const [input, setInput] = useState<string>('');
+  const [priority, setPriority] = useState<Priority>('medium');
+  const [dueDate, setDueDate] = useState<string>('');
+  const [dueTime, setDueTime] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [reminderMinutes, setReminderMinutes] = useState<number | string>('15');
+  const [recurrence, setRecurrence] = useState<Recurrence | null>(null);
+  const [voiceError, setVoiceError] = useState<string>('');
 
   // Get today's date in local timezone (YYYY-MM-DD format)
-  const getTodayLocalDate = () => {
+  const getTodayLocalDate = (): string => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -26,7 +41,7 @@ function ToDoForm({ addTask }) {
     return `${year}-${month}-${day}`;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (input.trim()) {
       addTask({
@@ -35,7 +50,7 @@ function ToDoForm({ addTask }) {
         dueDate: dueDate || getTodayLocalDate(), // Default to today if no date selected
         dueTime: dueTime,
         category: category.trim(),
-        reminderMinutes: reminderMinutes ? parseInt(reminderMinutes) : null,
+        reminderMinutes: reminderMinutes ? parseInt(reminderMinutes.toString()) : null,
         recurrence: recurrence
       });
       setInput('');
@@ -48,25 +63,25 @@ function ToDoForm({ addTask }) {
     }
   };
 
-  const handleVoiceTranscript = (transcript) => {
+  const handleVoiceTranscript = (transcript: string): void => {
     setInput(transcript);
     setVoiceError('');
   };
 
-  const handleInterimTranscript = (transcript) => {
+  const handleInterimTranscript = (transcript: string): void => {
     // Update input with interim results in real-time
     setInput(transcript);
   };
 
-  const handleVoiceError = (error) => {
+  const handleVoiceError = (error: string): void => {
     setVoiceError(error);
     setTimeout(() => setVoiceError(''), 5000);
   };
 
-  const handleVoiceAddTask = () => {
+  const handleVoiceAddTask = (): void => {
     // Submit the form when voice "Add Task" button is clicked
     if (input.trim()) {
-      handleSubmit({ preventDefault: () => {} });
+      handleSubmit({ preventDefault: () => {} } as React.FormEvent<HTMLFormElement>);
     }
   };
 
