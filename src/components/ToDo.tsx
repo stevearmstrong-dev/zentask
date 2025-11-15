@@ -159,11 +159,11 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime, onFocu
                     {task.recurrence === 'yearly' && 'Yearly'}
                   </span>
                 )}
+              </div>
+              <div className="todo-meta">
                 <span className={`priority-badge priority-badge-${task.priority || 'medium'}`}>
                   {(task.priority || 'medium').toUpperCase()}
                 </span>
-              </div>
-              <div className="todo-meta">
                 {task.category && (
                   <span className="category-tag">
                     {task.category}

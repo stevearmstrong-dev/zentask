@@ -600,6 +600,7 @@ body {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(115, 171, 255, 0.2);
   backdrop-filter: blur(10px);
+  min-width: 0;
 }
 
 .dark-mode .todo-item {
@@ -629,6 +630,7 @@ body {
   align-items: flex-start;
   gap: 14px;
   flex: 1;
+  min-width: 0;
 }
 
 .todo-details {
@@ -671,11 +673,13 @@ body {
 
 /* Priority Badges */
 .priority-badge {
+  display: inline-block;
   padding: 4px 10px;
   border-radius: 8px;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.3px;
+  white-space: nowrap;
 }
 
 .priority-badge-high {
@@ -711,9 +715,15 @@ body {
 /* Todo Meta */
 .todo-meta {
   display: flex;
+  flex-direction: row;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.todo-meta > * {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .category-tag {
@@ -763,9 +773,9 @@ body {
   display: flex;
   gap: 8px;
   align-items: flex-start;
-  flex-shrink: 0;
   flex-wrap: wrap;
   margin-left: 12px;
+  justify-content: flex-end;
 }
 
 .btn-edit,
@@ -5497,6 +5507,85 @@ body {
 
 .quadrant-tasks::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.4) 0%, rgba(115, 171, 255, 0.3) 100%);
+}
+
+/* Compact todo items in matrix quadrants */
+.matrix-quadrant .todo-item {
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.matrix-quadrant .todo-content {
+  min-width: 0;
+  flex: 1;
+  flex-shrink: 1;
+}
+
+.matrix-quadrant .todo-details {
+  gap: 5px;
+}
+
+.matrix-quadrant .todo-text-row {
+  max-width: 200px;
+}
+
+.matrix-quadrant .todo-text {
+  font-size: 0.95rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.matrix-quadrant .todo-meta {
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 0;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.matrix-quadrant .todo-meta::-webkit-scrollbar {
+  display: none;
+}
+
+.matrix-quadrant .priority-badge {
+  padding: 3px 8px;
+  font-size: 0.65rem;
+}
+
+.matrix-quadrant .category-tag {
+  padding: 3px 8px;
+  font-size: 0.65rem;
+}
+
+.matrix-quadrant .due-date {
+  font-size: 0.7rem;
+}
+
+.matrix-quadrant .reminder-badge {
+  padding: 3px 8px;
+  font-size: 0.65rem;
+}
+
+.matrix-quadrant .todo-actions {
+  gap: 6px;
+  margin-left: 12px;
+}
+
+.matrix-quadrant .btn-edit,
+.matrix-quadrant .btn-delete,
+.matrix-quadrant .btn-save,
+.matrix-quadrant .btn-cancel,
+.matrix-quadrant .btn-focus {
+  padding: 6px 10px;
+  font-size: 0.8rem;
 }
 
 .empty-quadrant {
