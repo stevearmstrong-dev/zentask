@@ -589,7 +589,7 @@ body {
 
 /* Todo Item */
 .todo-item {
-  background: rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
   border-radius: 16px;
   padding: 20px 24px;
   margin-bottom: 12px;
@@ -597,25 +597,26 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(17, 23, 34, 0.06);
+  border: 1px solid rgba(115, 171, 255, 0.2);
   backdrop-filter: blur(10px);
 }
 
 .dark-mode .todo-item {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(115, 171, 255, 0.08);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.25);
 }
 
 .todo-item:hover {
   transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
   box-shadow: 0 8px 20px rgba(115, 171, 255, 0.15);
-  border-color: rgba(115, 171, 255, 0.2);
+  border-color: rgba(115, 171, 255, 0.4);
 }
 
 .dark-mode .todo-item:hover {
-  box-shadow: 0 8px 20px rgba(115, 171, 255, 0.2);
-  border-color: rgba(115, 171, 255, 0.3);
-  background: rgba(255, 255, 255, 0.06);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  box-shadow: 0 8px 20px rgba(115, 171, 255, 0.25);
+  border-color: rgba(115, 171, 255, 0.4);
 }
 
 .todo-item.completed {
