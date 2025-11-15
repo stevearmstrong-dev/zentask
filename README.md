@@ -185,28 +185,29 @@ zentask/
 ├── src/
 │   ├── components/
 │   │   ├── Auth/
-│   │   │   ├── SignIn.js          # Authentication forms
-│   │   │   ├── SignUp.js
-│   │   │   └── PasswordReset.js
-│   │   ├── CalendarPicker.js      # Date selection component
-│   │   ├── CategoryPicker.js      # Category management
-│   │   ├── Dashboard.js           # Analytics dashboard
-│   │   ├── EisenhowerMatrix.js    # Eisenhower Matrix view
-│   │   ├── Greeting.js            # Personalized greeting
-│   │   ├── Onboarding.js          # New user tutorial
-│   │   ├── PomodoroTimer.js       # Focus timer with sessions
-│   │   ├── PriorityPicker.js      # Priority selection
-│   │   ├── QuickAddTasks.js       # One-click task creation
-│   │   ├── ReminderPicker.js      # Reminder time selection
-│   │   ├── Sidebar.js             # Navigation sidebar
-│   │   ├── TimePicker.js          # Time selection component
-│   │   ├── ToDo.js                # Individual task component
-│   │   ├── ToDoForm.js            # Task creation form
-│   │   ├── TodayView.js           # Today's tasks view
-│   │   └── VoiceInput.js          # Voice recognition input
+│   │   │   ├── SignIn.tsx         # Authentication forms
+│   │   │   ├── SignUp.tsx
+│   │   │   └── PasswordReset.tsx
+│   │   ├── CalendarPicker.tsx     # Date selection component
+│   │   ├── CategoryPicker.tsx     # Category management
+│   │   ├── Dashboard.tsx          # Analytics dashboard
+│   │   ├── EisenhowerMatrix.tsx   # Eisenhower Matrix view
+│   │   ├── Greeting.tsx           # Personalized greeting
+│   │   ├── Onboarding.tsx         # New user tutorial
+│   │   ├── PomodoroTimer.tsx      # Focus timer with sessions
+│   │   ├── PriorityPicker.tsx     # Priority selection
+│   │   ├── QuickAddTasks.tsx      # One-click task creation
+│   │   ├── ReminderPicker.tsx     # Reminder time selection
+│   │   ├── Sidebar.tsx            # Navigation sidebar
+│   │   ├── TimePicker.tsx         # Time selection component
+│   │   ├── ToDo.tsx               # Individual task component
+│   │   ├── ToDoForm.tsx           # Task creation form
+│   │   ├── TodayView.tsx          # Today's tasks view
+│   │   └── VoiceInput.tsx         # Voice recognition input
 │   ├── services/
 │   │   └── supabase.js            # Supabase client and utilities
-│   ├── App.js                     # Main app component
+│   ├── types.ts                   # TypeScript type definitions
+│   ├── App.tsx                    # Main app component
 │   ├── App.css                    # Global styles
 │   └── index.js                   # React entry point
 ├── public/
@@ -340,7 +341,7 @@ CREATE INDEX idx_tasks_is_tracking ON tasks(is_tracking);
 Custom configuration for GitHub Pages:
 - **Base Path**: `/zentask/` for GitHub Pages deployment
 - **Output Directory**: `build/` for compatibility
-- **JSX Support**: `.js` files with JSX syntax
+- **TypeScript Support**: `.tsx` files with full type checking
 - **HMR**: Hot Module Replacement for instant updates
 
 ## Troubleshooting
