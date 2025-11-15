@@ -65,6 +65,8 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 
 ### Frontend
 
+- **JavaScript (ES6+)**: Modern JavaScript with arrow functions, async/await, and modules
+- **TypeScript 5.9.3**: Type-safe development with static typing
 - **React 18.0.0**: Modern React with hooks and functional components
 - **Vite 6.4.1**: Lightning-fast build tool with HMR
 - **Chart.js 4.5.1**: Powerful charting library for analytics

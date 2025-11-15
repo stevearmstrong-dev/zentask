@@ -5249,7 +5249,7 @@ body {
 .eisenhower-matrix {
   max-width: 100%;
   margin: 0 auto;
-  padding: 16px;
+  padding: 8px;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -5289,7 +5289,7 @@ body {
 .matrix-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 32px;
 }
 
@@ -5304,7 +5304,7 @@ body {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
   border: 2px solid rgba(115, 171, 255, 0.2);
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(10px);
