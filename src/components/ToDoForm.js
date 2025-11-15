@@ -4,6 +4,7 @@ import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
 import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
+import RecurrencePicker from './RecurrencePicker';
 import VoiceInput from './VoiceInput';
 
 function ToDoForm({ addTask }) {
@@ -13,6 +14,7 @@ function ToDoForm({ addTask }) {
   const [dueTime, setDueTime] = useState('');
   const [category, setCategory] = useState('');
   const [reminderMinutes, setReminderMinutes] = useState('15');
+  const [recurrence, setRecurrence] = useState(null);
   const [voiceError, setVoiceError] = useState('');
 
   // Get today's date in local timezone (YYYY-MM-DD format)
@@ -33,7 +35,8 @@ function ToDoForm({ addTask }) {
         dueDate: dueDate || getTodayLocalDate(), // Default to today if no date selected
         dueTime: dueTime,
         category: category.trim(),
-        reminderMinutes: reminderMinutes ? parseInt(reminderMinutes) : null
+        reminderMinutes: reminderMinutes ? parseInt(reminderMinutes) : null,
+        recurrence: recurrence
       });
       setInput('');
       setPriority('medium');
@@ -41,6 +44,7 @@ function ToDoForm({ addTask }) {
       setDueTime('');
       setCategory('');
       setReminderMinutes('15');
+      setRecurrence(null);
     }
   };
 
@@ -113,6 +117,11 @@ function ToDoForm({ addTask }) {
         <ReminderPicker
           selectedReminder={reminderMinutes}
           onSelectReminder={setReminderMinutes}
+        />
+
+        <RecurrencePicker
+          selectedRecurrence={recurrence}
+          onSelectRecurrence={setRecurrence}
         />
 
         <button type="submit" className="todo-button">

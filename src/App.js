@@ -190,6 +190,39 @@ function App() {
     }
   };
 
+  // Calculate next occurrence date based on recurrence pattern
+  const getNextOccurrenceDate = (currentDate, recurrence) => {
+    if (!recurrence || !currentDate) return null;
+
+    const [year, month, day] = currentDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+
+    switch (recurrence) {
+      case 'daily':
+        date.setDate(date.getDate() + 1);
+        break;
+      case 'weekly':
+        date.setDate(date.getDate() + 7);
+        break;
+      case 'biweekly':
+        date.setDate(date.getDate() + 14);
+        break;
+      case 'monthly':
+        date.setMonth(date.getMonth() + 1);
+        break;
+      case 'yearly':
+        date.setFullYear(date.getFullYear() + 1);
+        break;
+      default:
+        return null;
+    }
+
+    const nextYear = date.getFullYear();
+    const nextMonth = String(date.getMonth() + 1).padStart(2, '0');
+    const nextDay = String(date.getDate()).padStart(2, '0');
+    return `${nextYear}-${nextMonth}-${nextDay}`;
+  };
+
   const addTask = async (taskData) => {
     const newTask = {
       id: Date.now(),
@@ -200,6 +233,7 @@ function App() {
       dueTime: taskData.dueTime || '',
       category: taskData.category || '',
       reminderMinutes: taskData.reminderMinutes || null,
+      recurrence: taskData.recurrence || null,
     };
 
     // Save to Supabase if user is signed in
@@ -219,6 +253,46 @@ function App() {
     if (!task) return;
 
     const updatedTask = { ...task, completed: !task.completed };
+
+    // If completing a recurring task, create next occurrence
+    if (!task.completed && task.recurrence && updatedTask.completed) {
+      const nextDate = getNextOccurrenceDate(task.dueDate, task.recurrence);
+      if (nextDate) {
+        const nextTask = {
+          id: Date.now() + 1, // Ensure unique ID
+          text: task.text,
+          completed: false,
+          priority: task.priority,
+          dueDate: nextDate,
+          dueTime: task.dueTime,
+          category: task.category,
+          reminderMinutes: task.reminderMinutes,
+          recurrence: task.recurrence,
+        };
+
+        // Save next occurrence to Supabase
+        if (userEmail) {
+          try {
+            await supabaseService.createTask(nextTask, userEmail);
+          } catch (error) {
+            console.error('Failed to create recurring task in Supabase:', error);
+          }
+        }
+
+        // Add next occurrence to tasks
+        setTasks([...tasks.map((t) => t.id === id ? updatedTask : t), nextTask]);
+
+        // Update current task in Supabase
+        if (userEmail) {
+          try {
+            await supabaseService.updateTask(id, updatedTask, userEmail);
+          } catch (error) {
+            console.error('Failed to update task in Supabase:', error);
+          }
+        }
+        return;
+      }
+    }
 
     // Update in Supabase if user is signed in
     if (userEmail) {

@@ -4944,3 +4944,65 @@ body {
     padding: 24px;
   }
 }
+
+/* ===== Recurrence Picker ===== */
+.recurrence-picker {
+  position: relative;
+}
+
+.recurrence-dropdown {
+  min-width: 200px;
+}
+
+.recurrence-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.recurrence-option:hover {
+  background-color: rgba(115, 171, 255, 0.1);
+}
+
+.recurrence-option.selected {
+  background-color: rgba(115, 171, 255, 0.15);
+}
+
+.dark-mode .recurrence-option:hover {
+  background-color: rgba(115, 171, 255, 0.15);
+}
+
+.dark-mode .recurrence-option.selected {
+  background-color: rgba(115, 171, 255, 0.2);
+}
+
+/* Recurring task indicator */
+.recurring-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(115, 171, 255, 0.1);
+  border: 1px solid rgba(115, 171, 255, 0.3);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: #73ABFF;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.dark-mode .recurring-indicator {
+  background: rgba(115, 171, 255, 0.15);
+  border-color: rgba(115, 171, 255, 0.4);
+}
+
+.recurring-indicator-icon {
+  font-size: 0.9rem;
+}

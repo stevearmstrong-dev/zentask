@@ -138,6 +138,16 @@ function ToDo({ task, toggleComplete, deleteTask, editTask }) {
             <div className="todo-details">
               <div className="todo-text-row">
                 <span className="todo-text">{task.text}</span>
+                {task.recurrence && (
+                  <span className="recurring-indicator">
+                    <span className="recurring-indicator-icon">🔄</span>
+                    {task.recurrence === 'daily' && 'Daily'}
+                    {task.recurrence === 'weekly' && 'Weekly'}
+                    {task.recurrence === 'biweekly' && 'Biweekly'}
+                    {task.recurrence === 'monthly' && 'Monthly'}
+                    {task.recurrence === 'yearly' && 'Yearly'}
+                  </span>
+                )}
                 <span className={`priority-badge priority-badge-${task.priority || 'medium'}`}>
                   {(task.priority || 'medium').toUpperCase()}
                 </span>
