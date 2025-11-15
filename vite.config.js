@@ -8,9 +8,4 @@ export default defineConfig({
   build: {
     outDir: 'build',
   },
-  esbuild: {
-    include: /\.([jt]sx?|ts)$/,
-    jsxFactory: 'React.createElement',
-    jsxFragment: 'React.Fragment',
-  },
 })
