@@ -4,8 +4,9 @@ import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
 import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
+import TimeTracker from './TimeTracker';
 
-function ToDo({ task, toggleComplete, deleteTask, editTask }) {
+function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(task.text);
   const [editPriority, setEditPriority] = useState(task.priority || 'medium');
@@ -173,6 +174,7 @@ function ToDo({ task, toggleComplete, deleteTask, editTask }) {
               </div>
             </div>
           </div>
+          <TimeTracker task={task} onUpdateTime={onUpdateTime} />
           <div className="todo-actions">
             <button
               className="btn-edit"

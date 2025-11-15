@@ -234,6 +234,9 @@ function App() {
       category: taskData.category || '',
       reminderMinutes: taskData.reminderMinutes || null,
       recurrence: taskData.recurrence || null,
+      timeSpent: 0,
+      isTracking: false,
+      trackingStartTime: null,
     };
 
     // Save to Supabase if user is signed in
@@ -268,6 +271,9 @@ function App() {
           category: task.category,
           reminderMinutes: task.reminderMinutes,
           recurrence: task.recurrence,
+          timeSpent: 0,
+          isTracking: false,
+          trackingStartTime: null,
         };
 
         // Save next occurrence to Supabase
@@ -341,6 +347,57 @@ function App() {
         task.id === id ? updatedTask : task
       )
     );
+  };
+
+  const updateTaskTime = async (id, timeData) => {
+    // If starting tracking, stop all other tasks
+    if (timeData.isTracking) {
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === id) {
+          // Start tracking this task
+          return { ...task, ...timeData };
+        } else if (task.isTracking) {
+          // Stop tracking other tasks
+          const elapsed = Math.floor((Date.now() - task.trackingStartTime) / 1000);
+          const stoppedTask = {
+            ...task,
+            timeSpent: (task.timeSpent || 0) + elapsed,
+            isTracking: false,
+            trackingStartTime: null,
+          };
+
+          // Update stopped task in Supabase
+          if (userEmail) {
+            supabaseService.updateTask(task.id, stoppedTask, userEmail).catch((error) => {
+              console.error('Failed to update stopped task in Supabase:', error);
+            });
+          }
+
+          return stoppedTask;
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
+    } else {
+      // Just update the specific task (stopping or resetting)
+      const task = tasks.find((t) => t.id === id);
+      const updatedTask = { ...task, ...timeData };
+
+      setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
+    }
+
+    // Update in Supabase
+    if (userEmail) {
+      const task = tasks.find((t) => t.id === id);
+      const updatedTask = { ...task, ...timeData };
+
+      try {
+        await supabaseService.updateTask(id, updatedTask, userEmail);
+      } catch (error) {
+        console.error('Failed to update task time in Supabase:', error);
+      }
+    }
   };
 
   const clearCompleted = async () => {
@@ -495,6 +552,7 @@ function App() {
               toggleComplete={toggleComplete}
               deleteTask={deleteTask}
               editTask={editTask}
+              onUpdateTime={updateTaskTime}
             />
           </>
         ) : view === 'tasks' ? (
@@ -551,6 +609,7 @@ function App() {
                     toggleComplete={toggleComplete}
                     deleteTask={deleteTask}
                     editTask={editTask}
+                    onUpdateTime={updateTaskTime}
                   />
                 ))
               )}

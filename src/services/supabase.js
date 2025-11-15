@@ -74,6 +74,9 @@ class SupabaseService {
             reminder_minutes: task.reminderMinutes,
             recurrence: task.recurrence,
             calendar_event_id: task.calendarEventId,
+            time_spent: task.timeSpent || 0,
+            is_tracking: task.isTracking || false,
+            tracking_start_time: task.trackingStartTime || null,
           },
         ])
         .select()
@@ -104,6 +107,9 @@ class SupabaseService {
           reminder_minutes: updates.reminderMinutes,
           recurrence: updates.recurrence,
           calendar_event_id: updates.calendarEventId,
+          time_spent: updates.timeSpent,
+          is_tracking: updates.isTracking,
+          tracking_start_time: updates.trackingStartTime,
         })
         .eq('id', taskId)
         .eq('user_email', userEmail)
@@ -169,6 +175,9 @@ class SupabaseService {
       reminderMinutes: dbTask.reminder_minutes,
       recurrence: dbTask.recurrence,
       calendarEventId: dbTask.calendar_event_id,
+      timeSpent: dbTask.time_spent || 0,
+      isTracking: dbTask.is_tracking || false,
+      trackingStartTime: dbTask.tracking_start_time || null,
     };
   }
 
@@ -186,6 +195,9 @@ class SupabaseService {
       reminder_minutes: task.reminderMinutes,
       recurrence: task.recurrence,
       calendar_event_id: task.calendarEventId,
+      time_spent: task.timeSpent || 0,
+      is_tracking: task.isTracking || false,
+      tracking_start_time: task.trackingStartTime || null,
     };
   }
 }

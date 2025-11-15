@@ -44,6 +44,47 @@ function Dashboard({ tasks }) {
     return dueDate >= today && dueDate <= nextWeek;
   }).length;
 
+  // Time tracking statistics
+  const totalTimeSpent = tasks.reduce((total, task) => total + (task.timeSpent || 0), 0);
+  const formatTotalTime = (seconds) => {
+    if (seconds < 60) return `${seconds}s`;
+    if (seconds < 3600) {
+      const mins = Math.floor(seconds / 60);
+      return `${mins}m`;
+    }
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+  };
+
+  // Time by priority
+  const timeByPriority = {
+    high: tasks.filter(t => t.priority === 'high').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
+    medium: tasks.filter(t => t.priority === 'medium').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
+    low: tasks.filter(t => t.priority === 'low').reduce((sum, t) => sum + (t.timeSpent || 0), 0),
+  };
+
+  // Convert seconds to hours for chart display
+  const secondsToHours = (seconds) => (seconds / 3600).toFixed(1);
+
+  // Time tracking chart data
+  const timeTrackingChartData = {
+    labels: ['High', 'Medium', 'Low'],
+    datasets: [
+      {
+        label: 'Time Spent (hours)',
+        data: [
+          secondsToHours(timeByPriority.high),
+          secondsToHours(timeByPriority.medium),
+          secondsToHours(timeByPriority.low),
+        ],
+        backgroundColor: ['rgba(255, 107, 107, 0.8)', 'rgba(255, 212, 59, 0.8)', 'rgba(81, 207, 102, 0.8)'],
+        borderColor: ['#ff6b6b', '#ffd43b', '#51cf66'],
+        borderWidth: 2,
+      },
+    ],
+  };
+
   // Completion Chart Data
   const completionChartData = {
     labels: ['Completed', 'Active'],
@@ -171,6 +212,14 @@ function Dashboard({ tasks }) {
             <div className="stat-label">Due This Week</div>
           </div>
         </div>
+
+        <div className="stat-card success">
+          <div className="stat-icon">⏱️</div>
+          <div className="stat-info">
+            <div className="stat-value">{formatTotalTime(totalTimeSpent)}</div>
+            <div className="stat-label">Time Tracked</div>
+          </div>
+        </div>
       </div>
 
       {/* Charts */}
@@ -199,6 +248,15 @@ function Dashboard({ tasks }) {
             <Doughnut data={categoryChartData} options={chartOptions} />
           ) : (
             <p className="no-data">No categorized tasks</p>
+          )}
+        </div>
+
+        <div className="chart-container">
+          <h3 className="chart-title">Time Spent by Priority</h3>
+          {totalTimeSpent > 0 ? (
+            <Bar data={timeTrackingChartData} options={barChartOptions} />
+          ) : (
+            <p className="no-data">No time tracked yet</p>
           )}
         </div>
       </div>

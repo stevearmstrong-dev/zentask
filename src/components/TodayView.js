@@ -1,7 +1,7 @@
 import React from 'react';
 import ToDo from './ToDo';
 
-function TodayView({ tasks, toggleComplete, deleteTask, editTask }) {
+function TodayView({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -109,6 +109,7 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask }) {
                 toggleComplete={toggleComplete}
                 deleteTask={deleteTask}
                 editTask={editTask}
+                onUpdateTime={onUpdateTime}
                 isOverdue={true}
               />
             ))}
@@ -148,6 +149,7 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask }) {
                 toggleComplete={toggleComplete}
                 deleteTask={deleteTask}
                 editTask={editTask}
+                onUpdateTime={onUpdateTime}
               />
             ))}
           </div>
@@ -172,6 +174,7 @@ function TodayView({ tasks, toggleComplete, deleteTask, editTask }) {
                 toggleComplete={toggleComplete}
                 deleteTask={deleteTask}
                 editTask={editTask}
+                onUpdateTime={onUpdateTime}
               />
             ))}
           </div>

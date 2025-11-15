@@ -14,6 +14,7 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 
 - **Today View**: Focus on today's tasks with progress tracking and completion metrics
 - **Pomodoro Timer**: Built-in focus timer with work/break cycles, session tracking, and customizable durations
+- **Time Tracking**: Track time spent on each task with start/stop/reset controls and analytics
 - **Voice Input**: Add tasks hands-free using voice recognition (Chrome/Edge)
 - **Quick Add**: Rapidly create tasks with one-click priority and category presets
 - **Smart Reminders**: Browser notifications (5 min, 15 min, 30 min, 1 hour, 1 day before due time)
@@ -43,6 +44,7 @@ A modern, full-stack productivity application built with React and Supabase. Zen
   - Task completion rate with pie charts
   - Priority breakdown with bar charts
   - Category distribution with doughnut charts
+  - Time tracking statistics and charts
   - Overdue tasks count and warnings
   - Tasks due this week
   - Productivity trends
@@ -123,6 +125,9 @@ CREATE TABLE tasks (
   reminder_minutes INTEGER,
   recurrence TEXT,
   calendar_event_id TEXT,
+  time_spent INTEGER DEFAULT 0,
+  is_tracking BOOLEAN DEFAULT false,
+  tracking_start_time BIGINT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -130,6 +135,7 @@ CREATE TABLE tasks (
 CREATE INDEX idx_tasks_user_email ON tasks(user_email);
 CREATE INDEX idx_tasks_completed ON tasks(completed);
 CREATE INDEX idx_tasks_due_date ON tasks(due_date);
+CREATE INDEX idx_tasks_is_tracking ON tasks(is_tracking);
 ```
 
 ### Development
@@ -219,6 +225,18 @@ The integrated Pomodoro timer helps you maintain focus with:
 - **Notifications**: Browser alerts when sessions complete
 - **Settings panel**: Easy configuration without leaving the timer
 
+### Time Tracking
+
+Track how much time you spend on each task:
+- **Start/Stop controls**: Green play button to start, orange pause button to stop
+- **Automatic single-timer enforcement**: Starting a new timer automatically stops other running timers
+- **Real-time display**: Live countdown showing hours, minutes, and seconds
+- **Persistent tracking**: Time data syncs to Supabase and persists across sessions
+- **Reset functionality**: Clear tracked time with reset button (only shows when time > 0)
+- **Disabled for completed tasks**: Can't track time on finished tasks
+- **Dashboard analytics**: View total time tracked and time breakdown by priority
+- **Visual feedback**: Pulsing animation on active timer, monospace time display
+
 ### Voice Input
 
 Add tasks naturally using your voice:
@@ -286,6 +304,9 @@ CREATE TABLE tasks (
   reminder_minutes INTEGER,
   recurrence TEXT,
   calendar_event_id TEXT,
+  time_spent INTEGER DEFAULT 0,
+  is_tracking BOOLEAN DEFAULT false,
+  tracking_start_time BIGINT,
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -293,6 +314,7 @@ CREATE TABLE tasks (
 CREATE INDEX idx_tasks_user_email ON tasks(user_email);
 CREATE INDEX idx_tasks_completed ON tasks(completed);
 CREATE INDEX idx_tasks_due_date ON tasks(due_date);
+CREATE INDEX idx_tasks_is_tracking ON tasks(is_tracking);
 ```
 
 ## Vite Configuration
@@ -395,11 +417,11 @@ Check [caniuse.com](https://caniuse.com/) for:
 Planned features for future releases:
 
 - [x] **Recurring Tasks**: Daily, weekly, biweekly, monthly, yearly auto-regeneration ✓
+- [x] **Time Tracking**: Track actual time spent on tasks ✓
 - [ ] **Subtasks**: Break tasks into smaller checklist items
 - [ ] **Kanban Board**: Drag-and-drop task workflow
 - [ ] **Habit Tracker**: Daily habits with streak counters
 - [ ] **Tags System**: Multiple tags per task
-- [ ] **Time Tracking**: Track actual time spent on tasks
 - [ ] **Calendar View**: Monthly/weekly calendar visualization
 - [ ] **Keyboard Shortcuts**: Power user shortcuts
 - [ ] **Focus Mode**: Distraction-free single-task view
