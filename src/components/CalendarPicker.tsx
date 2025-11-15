@@ -1,14 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-function CalendarPicker({ selectedDate, onSelectDate, minDate }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const calendarRef = useRef(null);
+interface CalendarPickerProps {
+  selectedDate?: string;
+  onSelectDate: (date: string) => void;
+  minDate?: string;
+}
+
+interface CalendarDay {
+  day: number;
+  isCurrentMonth: boolean;
+  isNextMonth: boolean;
+}
+
+interface MonthData {
+  daysInMonth: number;
+  startingDayOfWeek: number;
+  year: number;
+  month: number;
+}
+
+function CalendarPicker({ selectedDate, onSelectDate, minDate }: CalendarPickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   // Close calendar when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -22,14 +41,14 @@ function CalendarPicker({ selectedDate, onSelectDate, minDate }) {
     };
   }, [isOpen]);
 
-  const formatDisplayDate = (dateString) => {
+  const formatDisplayDate = (dateString?: string): string => {
     if (!dateString) return 'Select date';
     const [year, month, day] = dateString.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const getDaysInMonth = (date) => {
+  const getDaysInMonth = (date: Date): MonthData => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -42,15 +61,15 @@ function CalendarPicker({ selectedDate, onSelectDate, minDate }) {
 
   const { daysInMonth, startingDayOfWeek, year, month } = getDaysInMonth(currentMonth);
 
-  const handlePrevMonth = () => {
+  const handlePrevMonth = (): void => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
   };
 
-  const handleNextMonth = () => {
+  const handleNextMonth = (): void => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
   };
 
-  const handleDateClick = (day) => {
+  const handleDateClick = (day: number): void => {
     const selectedYear = currentMonth.getFullYear();
     const selectedMonth = String(currentMonth.getMonth() + 1).padStart(2, '0');
     const selectedDay = String(day).padStart(2, '0');
@@ -60,7 +79,7 @@ function CalendarPicker({ selectedDate, onSelectDate, minDate }) {
     setIsOpen(false);
   };
 
-  const isDateDisabled = (day) => {
+  const isDateDisabled = (day: number): boolean => {
     if (!minDate) return false;
 
     const checkDate = new Date(year, month, day);
@@ -70,20 +89,20 @@ function CalendarPicker({ selectedDate, onSelectDate, minDate }) {
     return checkDate < minimumDate;
   };
 
-  const isDateSelected = (day) => {
+  const isDateSelected = (day: number): boolean => {
     if (!selectedDate) return false;
 
     const [selectedYear, selectedMonth, selectedDay] = selectedDate.split('-').map(Number);
     return year === selectedYear && month === selectedMonth - 1 && day === selectedDay;
   };
 
-  const isToday = (day) => {
+  const isToday = (day: number): boolean => {
     const today = new Date();
     return year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
   };
 
   // Generate calendar grid
-  const calendarDays = [];
+  const calendarDays: CalendarDay[] = [];
   const totalSlots = 42; // 6 rows x 7 days
 
   // Previous month days

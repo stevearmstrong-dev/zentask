@@ -1,12 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
-  const [isListening, setIsListening] = useState(false);
-  const [isSupported, setIsSupported] = useState(true);
-  const [speechCaptured, setSpeechCaptured] = useState(false);
-  const recognitionRef = useRef(null);
-  const finalTranscriptRef = useRef('');
-  const isListeningRef = useRef(false);
+// Extend Window interface for WebKit Speech Recognition
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
+
+interface VoiceInputProps {
+  onTranscript?: (text: string) => void;
+  onInterimTranscript?: (text: string) => void;
+  onError?: (error: string) => void;
+  onAddTask?: () => void;
+}
+
+function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }: VoiceInputProps) {
+  const [isListening, setIsListening] = useState<boolean>(false);
+  const [isSupported, setIsSupported] = useState<boolean>(true);
+  const [speechCaptured, setSpeechCaptured] = useState<boolean>(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const finalTranscriptRef = useRef<string>('');
+  const isListeningRef = useRef<boolean>(false);
 
   // Store callbacks in refs so they're always up-to-date
   const onTranscriptRef = useRef(onTranscript);
@@ -24,21 +39,21 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
 
   useEffect(() => {
     // Check if browser supports Speech Recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionAPI) {
       setIsSupported(false);
       return;
     }
 
     // Initialize speech recognition with SIMPLE mode
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionAPI();
     recognition.continuous = false; // One utterance at a time (more reliable)
     recognition.interimResults = true; // Show real-time results
     recognition.lang = 'en-US';
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = (event) => {
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
       let interimTranscript = '';
       let finalTranscript = finalTranscriptRef.current;
 
@@ -67,7 +82,7 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
       }
     };
 
-    recognition.onerror = (event) => {
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       // Don't stop on 'no-speech' - user might just be pausing
       if (event.error === 'no-speech') {
         return;
@@ -113,7 +128,7 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
     };
   }, []); // Empty dependencies - recognition instance doesn't need to be recreated
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (): void => {
     if (!isSupported) {
       if (onErrorRef.current) {
         onErrorRef.current('Voice recognition is not supported in your browser. Please try Chrome or Edge.');
@@ -132,12 +147,12 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
 
     // Otherwise, toggle listening
     if (isListening) {
-      recognitionRef.current.stop();
+      recognitionRef.current?.stop();
       setIsListening(false);
       isListeningRef.current = false;
     } else {
       try {
-        recognitionRef.current.start();
+        recognitionRef.current?.start();
         setIsListening(true);
         isListeningRef.current = true;
       } catch (error) {
@@ -146,11 +161,6 @@ function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }) {
         }
       }
     }
-  };
-
-  // Reset function to be called after task is added
-  const reset = () => {
-    setSpeechCaptured(false);
   };
 
   if (!isSupported) {

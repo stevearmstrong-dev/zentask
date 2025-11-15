@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
 import { supabase } from '../../services/supabase';
 
-function SignUp({ onSignUpSuccess, onSwitchToSignIn }) {
-  const [formData, setFormData] = useState({
+interface SignUpProps {
+  onSignUpSuccess?: () => void;
+  onSwitchToSignIn?: () => void;
+}
+
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+function SignUp({ onSignUpSuccess, onSwitchToSignIn }: SignUpProps) {
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showVerificationMessage, setShowVerificationMessage] = useState<boolean>(false);
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     if (!formData.email.trim()) {
       setError('Please enter your email');
       return false;
@@ -42,7 +54,7 @@ function SignUp({ onSignUpSuccess, onSwitchToSignIn }) {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError('');
 
@@ -84,7 +96,7 @@ function SignUp({ onSignUpSuccess, onSwitchToSignIn }) {
         }
       }, 3000);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error signing up:', error);
       setError(error.message || 'Failed to sign up. Please try again.');
     } finally {
@@ -92,7 +104,7 @@ function SignUp({ onSignUpSuccess, onSwitchToSignIn }) {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value

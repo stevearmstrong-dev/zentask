@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
+import { Recurrence } from '../types';
 
-function RecurrencePicker({ selectedRecurrence, onSelectRecurrence }) {
-  const [isOpen, setIsOpen] = useState(false);
+interface RecurrencePickerProps {
+  selectedRecurrence?: Recurrence | null;
+  onSelectRecurrence: (value: Recurrence | null) => void;
+}
 
-  const recurrenceOptions = [
+interface RecurrenceOption {
+  value: string;
+  label: string;
+  icon: string;
+}
+
+function RecurrencePicker({ selectedRecurrence, onSelectRecurrence }: RecurrencePickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const recurrenceOptions: RecurrenceOption[] = [
     { value: 'none', label: 'Does not repeat', icon: '○' },
     { value: 'daily', label: 'Daily', icon: '📅' },
     { value: 'weekly', label: 'Weekly', icon: '📆' },
@@ -12,12 +24,12 @@ function RecurrencePicker({ selectedRecurrence, onSelectRecurrence }) {
     { value: 'yearly', label: 'Yearly', icon: '🎂' },
   ];
 
-  const getCurrentOption = () => {
+  const getCurrentOption = (): RecurrenceOption | undefined => {
     return recurrenceOptions.find(opt => opt.value === (selectedRecurrence || 'none'));
   };
 
-  const handleSelect = (value) => {
-    onSelectRecurrence(value === 'none' ? null : value);
+  const handleSelect = (value: string): void => {
+    onSelectRecurrence(value === 'none' ? null : value as Recurrence);
     setIsOpen(false);
   };
 

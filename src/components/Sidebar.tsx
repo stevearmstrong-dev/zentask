@@ -1,7 +1,24 @@
 import React from 'react';
 
-function Sidebar({ activeView, onViewChange, userName, onSignOut, darkMode, onToggleDarkMode }) {
-  const menuItems = [
+type ViewType = 'today' | 'tasks' | 'dashboard' | 'matrix' | 'pomodoro';
+
+interface MenuItem {
+  id: ViewType;
+  icon: string;
+  label: string;
+}
+
+interface SidebarProps {
+  activeView: ViewType;
+  onViewChange: (view: ViewType) => void;
+  userName: string;
+  onSignOut: () => void;
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+}
+
+function Sidebar({ activeView, onViewChange, userName, onSignOut, darkMode, onToggleDarkMode }: SidebarProps) {
+  const menuItems: MenuItem[] = [
     { id: 'today', icon: '📅', label: 'Today' },
     { id: 'tasks', icon: '✓', label: 'All Tasks' },
     { id: 'dashboard', icon: '📊', label: 'Dashboard' },
@@ -59,3 +76,4 @@ function Sidebar({ activeView, onViewChange, userName, onSignOut, darkMode, onTo
 }
 
 export default Sidebar;
+export type { ViewType };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const motivationalQuotes = [
+const motivationalQuotes: string[] = [
   'Be so good no one can ignore you',
   'Focus on being productive instead of busy',
   'The secret of getting ahead is getting started',
@@ -18,12 +18,16 @@ const motivationalQuotes = [
   'Little things make big days'
 ];
 
-function Greeting({ userName }) {
-  const [greeting, setGreeting] = useState('');
-  const [quote, setQuote] = useState('');
+interface GreetingProps {
+  userName?: string;
+}
+
+function Greeting({ userName }: GreetingProps) {
+  const [greeting, setGreeting] = useState<string>('');
+  const [quote, setQuote] = useState<string>('');
 
   useEffect(() => {
-    const updateGreeting = () => {
+    const updateGreeting = (): void => {
       const hour = new Date().getHours();
       let greetingText = '';
 
@@ -40,7 +44,7 @@ function Greeting({ userName }) {
       setGreeting(greetingText);
     };
 
-    const selectRandomQuote = () => {
+    const selectRandomQuote = (): void => {
       const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
       setQuote(motivationalQuotes[randomIndex]);
     };
