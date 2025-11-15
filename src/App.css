@@ -4948,23 +4948,60 @@ body {
 /* ===== Recurrence Picker ===== */
 .recurrence-picker {
   position: relative;
+  display: inline-block;
+}
+
+.recurrence-picker .picker-button {
+  min-width: 180px;
+  justify-content: space-between;
 }
 
 .recurrence-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .recurrence-dropdown {
+  background: #2a2f3d;
+  border-color: rgba(115, 171, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .recurrence-option {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   cursor: pointer;
   border: none;
   background: transparent;
   width: 100%;
   text-align: left;
   transition: background-color 0.2s ease;
+  color: #1d1d1f;
+  font-size: 0.95rem;
+  border-radius: 0;
+}
+
+.dark-mode .recurrence-option {
+  color: #f5f5f7;
+}
+
+.recurrence-option:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.recurrence-option:last-child {
+  border-radius: 0 0 12px 12px;
 }
 
 .recurrence-option:hover {
@@ -4973,6 +5010,8 @@ body {
 
 .recurrence-option.selected {
   background-color: rgba(115, 171, 255, 0.15);
+  color: #73ABFF;
+  font-weight: 600;
 }
 
 .dark-mode .recurrence-option:hover {
@@ -4981,6 +5020,7 @@ body {
 
 .dark-mode .recurrence-option.selected {
   background-color: rgba(115, 171, 255, 0.2);
+  color: #73ABFF;
 }
 
 /* Recurring task indicator */
