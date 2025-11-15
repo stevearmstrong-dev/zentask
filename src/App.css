@@ -4624,10 +4624,9 @@ body {
 .main-content {
   flex: 1;
   margin-left: 260px;
-  padding: 40px;
+  padding: 20px;
   min-height: 100vh;
   background: transparent;
-  overflow-x: hidden;
 }
 
 /* Mobile responsive */
@@ -5250,7 +5249,7 @@ body {
 .eisenhower-matrix {
   max-width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding: 16px;
   animation: fadeIn 0.3s ease-in;
 }
 
@@ -5290,7 +5289,7 @@ body {
 .matrix-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  gap: 16px;
   margin-bottom: 32px;
 }
 
