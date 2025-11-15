@@ -1,9 +1,23 @@
 import React, { useState } from 'react';
 
-function Onboarding({ onComplete, addTask }) {
-  const [taskInputs, setTaskInputs] = useState(['', '', '']);
+interface NewTask {
+  text: string;
+  priority: string;
+  dueDate: string;
+  dueTime: string;
+  category: string;
+  reminderMinutes: null;
+}
 
-  const suggestedTasks = [
+interface OnboardingProps {
+  onComplete: () => void;
+  addTask: (task: NewTask) => void;
+}
+
+function Onboarding({ onComplete, addTask }: OnboardingProps) {
+  const [taskInputs, setTaskInputs] = useState<string[]>(['', '', '']);
+
+  const suggestedTasks: string[] = [
     'Do laundry',
     'Plan a trip to...',
     'Call back...',
@@ -14,13 +28,13 @@ function Onboarding({ onComplete, addTask }) {
     'Organize workspace'
   ];
 
-  const handleInputChange = (index, value) => {
+  const handleInputChange = (index: number, value: string): void => {
     const newInputs = [...taskInputs];
     newInputs[index] = value;
     setTaskInputs(newInputs);
   };
 
-  const handleAddSuggestedTask = (task) => {
+  const handleAddSuggestedTask = (task: string): void => {
     const emptyIndex = taskInputs.findIndex(input => input === '');
     if (emptyIndex !== -1) {
       const newInputs = [...taskInputs];
@@ -29,7 +43,7 @@ function Onboarding({ onComplete, addTask }) {
     }
   };
 
-  const handleComplete = () => {
+  const handleComplete = (): void => {
     // Add all non-empty tasks
     taskInputs.forEach(task => {
       if (task.trim()) {
@@ -49,7 +63,7 @@ function Onboarding({ onComplete, addTask }) {
     onComplete();
   };
 
-  const handleSkip = () => {
+  const handleSkip = (): void => {
     localStorage.setItem('hasCompletedOnboarding', 'true');
     onComplete();
   };

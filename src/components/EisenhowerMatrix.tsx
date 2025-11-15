@@ -1,9 +1,18 @@
 import React from 'react';
+import { Task } from '../types';
 import ToDo from './ToDo';
 
-function EisenhowerMatrix({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }) {
+interface EisenhowerMatrixProps {
+  tasks: Task[];
+  toggleComplete: (id: number) => void;
+  deleteTask: (id: number) => void;
+  editTask: (id: number, updates: Partial<Task>) => void;
+  onUpdateTime: (id: number, timeSpent: number) => void;
+}
+
+function EisenhowerMatrix({ tasks, toggleComplete, deleteTask, editTask, onUpdateTime }: EisenhowerMatrixProps) {
   // Helper function to check if task is due today or overdue
-  const isUrgent = (task) => {
+  const isUrgent = (task: Task): boolean => {
     if (!task.dueDate || task.completed) return false;
 
     const now = new Date();
@@ -18,7 +27,7 @@ function EisenhowerMatrix({ tasks, toggleComplete, deleteTask, editTask, onUpdat
   };
 
   // Helper function to check if task is important
-  const isImportant = (task) => {
+  const isImportant = (task: Task): boolean => {
     return task.priority === 'high';
   };
 
@@ -28,7 +37,7 @@ function EisenhowerMatrix({ tasks, toggleComplete, deleteTask, editTask, onUpdat
   const quadrant3 = tasks.filter(task => !task.completed && isUrgent(task) && !isImportant(task)); // Urgent & Not Important
   const quadrant4 = tasks.filter(task => !task.completed && !isUrgent(task) && !isImportant(task)); // Not Urgent & Not Important
 
-  const renderQuadrant = (quadrantTasks, title, subtitle, icon, colorClass) => (
+  const renderQuadrant = (quadrantTasks: Task[], title: string, subtitle: string, icon: string, colorClass: string) => (
     <div className={`matrix-quadrant ${colorClass}`}>
       <div className="quadrant-header">
         <div className="quadrant-title">

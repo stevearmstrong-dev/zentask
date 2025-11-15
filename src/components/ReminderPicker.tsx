@@ -1,10 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-function ReminderPicker({ selectedReminder, onSelectReminder }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const pickerRef = useRef(null);
+interface ReminderPickerProps {
+  selectedReminder?: number | string;
+  onSelectReminder: (value: number | string) => void;
+}
 
-  const reminders = [
+interface ReminderOption {
+  value: string;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+function ReminderPicker({ selectedReminder, onSelectReminder }: ReminderPickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  const reminders: ReminderOption[] = [
     { value: '', label: 'No Reminder', icon: '🔕', description: 'No notification' },
     { value: '5', label: '5 minutes', icon: '⏱️', description: '5 min before' },
     { value: '15', label: '15 minutes', icon: '⏰', description: '15 min before' },
@@ -15,8 +27,8 @@ function ReminderPicker({ selectedReminder, onSelectReminder }) {
 
   // Close picker when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -30,12 +42,12 @@ function ReminderPicker({ selectedReminder, onSelectReminder }) {
     };
   }, [isOpen]);
 
-  const handleSelect = (value) => {
+  const handleSelect = (value: string): void => {
     onSelectReminder(value);
     setIsOpen(false);
   };
 
-  const getDisplayInfo = () => {
+  const getDisplayInfo = (): ReminderOption => {
     const reminder = reminders.find(r => String(r.value) === String(selectedReminder));
     return reminder || reminders[0]; // Default to no reminder
   };

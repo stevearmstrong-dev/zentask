@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 
-function EmailPrompt({ onComplete }) {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+interface EmailPromptProps {
+  onComplete: (email: string) => void;
+}
 
-  const validateEmail = (email) => {
+function EmailPrompt({ onComplete }: EmailPromptProps) {
+  const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string>('');
+
+  const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
 
     if (!email.trim()) {
@@ -29,7 +33,7 @@ function EmailPrompt({ onComplete }) {
     onComplete(email);
   };
 
-  const handleSkip = () => {
+  const handleSkip = (): void => {
     // User can skip and use app without sync
     onComplete('');
   };

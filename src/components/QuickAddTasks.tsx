@@ -1,9 +1,30 @@
 import React, { useState } from 'react';
+import { Priority } from '../types';
 
-function QuickAddTasks({ addTask }) {
-  const [isExpanded, setIsExpanded] = useState(true);
+interface QuickTask {
+  text: string;
+  category: string;
+  priority: Priority;
+  icon: string;
+}
 
-  const quickTasks = [
+interface NewQuickTask {
+  text: string;
+  priority: Priority;
+  category: string;
+  dueDate: string;
+  dueTime: string;
+  reminderMinutes: null;
+}
+
+interface QuickAddTasksProps {
+  addTask: (task: NewQuickTask) => void;
+}
+
+function QuickAddTasks({ addTask }: QuickAddTasksProps) {
+  const [isExpanded, setIsExpanded] = useState<boolean>(true);
+
+  const quickTasks: QuickTask[] = [
     // Hydration
     { text: 'Drink water', category: 'Hydration', priority: 'low', icon: '💧' },
 
@@ -34,7 +55,7 @@ function QuickAddTasks({ addTask }) {
   ];
 
   // Get today's date in local timezone (YYYY-MM-DD format)
-  const getTodayLocalDate = () => {
+  const getTodayLocalDate = (): string => {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -42,7 +63,7 @@ function QuickAddTasks({ addTask }) {
     return `${year}-${month}-${day}`;
   };
 
-  const handleQuickAdd = (task) => {
+  const handleQuickAdd = (task: QuickTask): void => {
     addTask({
       text: `${task.icon} ${task.text}`,
       priority: task.priority,

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Task, Priority } from '../types';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
@@ -6,16 +7,24 @@ import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
 import TimeTracker from './TimeTracker';
 
-function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(task.text);
-  const [editPriority, setEditPriority] = useState(task.priority || 'medium');
-  const [editDueDate, setEditDueDate] = useState(task.dueDate || '');
-  const [editDueTime, setEditDueTime] = useState(task.dueTime || '');
-  const [editCategory, setEditCategory] = useState(task.category || '');
-  const [editReminderMinutes, setEditReminderMinutes] = useState(task.reminderMinutes || '');
+interface ToDoProps {
+  task: Task;
+  toggleComplete: (id: number) => void;
+  deleteTask: (id: number) => void;
+  editTask: (id: number, updates: Partial<Task>) => void;
+  onUpdateTime: (id: number, timeSpent: number) => void;
+}
 
-  const handleEdit = () => {
+function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }: ToDoProps) {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editValue, setEditValue] = useState<string>(task.text);
+  const [editPriority, setEditPriority] = useState<Priority>(task.priority || 'medium');
+  const [editDueDate, setEditDueDate] = useState<string>(task.dueDate || '');
+  const [editDueTime, setEditDueTime] = useState<string>(task.dueTime || '');
+  const [editCategory, setEditCategory] = useState<string>(task.category || '');
+  const [editReminderMinutes, setEditReminderMinutes] = useState<number | string>(task.reminderMinutes || '');
+
+  const handleEdit = (): void => {
     if (editValue.trim()) {
       editTask(task.id, {
         text: editValue,
@@ -23,13 +32,13 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
         dueDate: editDueDate,
         dueTime: editDueTime,
         category: editCategory.trim(),
-        reminderMinutes: editReminderMinutes ? parseInt(editReminderMinutes) : null
+        reminderMinutes: editReminderMinutes ? parseInt(editReminderMinutes.toString()) : null
       });
       setIsEditing(false);
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setEditValue(task.text);
     setEditPriority(task.priority || 'medium');
     setEditDueDate(task.dueDate || '');
@@ -39,11 +48,11 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
     setIsEditing(false);
   };
 
-  const getPriorityClass = () => {
+  const getPriorityClass = (): string => {
     return `priority-${task.priority || 'medium'}`;
   };
 
-  const isOverdue = () => {
+  const isOverdue = (): boolean => {
     if (!task.dueDate || task.completed) return false;
 
     const now = new Date();
@@ -59,7 +68,7 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
     return dueDateTime < now;
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString?: string): string => {
     if (!dateString) return '';
     // Parse date string in local timezone to avoid UTC conversion issues
     const [year, month, day] = dateString.split('-').map(Number);
@@ -67,7 +76,7 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const formatTime = (timeString) => {
+  const formatTime = (timeString?: string): string => {
     if (!timeString) return '';
     const [hours, minutes] = timeString.split(':');
     const hour = parseInt(hours);
@@ -76,7 +85,7 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime }) {
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  const getReminderText = (minutes) => {
+  const getReminderText = (minutes?: number): string => {
     if (!minutes) return '';
     if (minutes < 60) return `${minutes} min before`;
     if (minutes === 60) return '1 hour before';

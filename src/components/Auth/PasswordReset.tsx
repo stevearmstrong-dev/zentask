@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { supabase } from '../../services/supabase';
 
-function PasswordReset({ onBackToSignIn }) {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+interface PasswordResetProps {
+  onBackToSignIn?: () => void;
+}
 
-  const validateEmail = () => {
+function PasswordReset({ onBackToSignIn }: PasswordResetProps) {
+  const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [emailSent, setEmailSent] = useState<boolean>(false);
+
+  const validateEmail = (): boolean => {
     if (!email.trim()) {
       setError('Please enter your email');
       return false;
@@ -22,7 +26,7 @@ function PasswordReset({ onBackToSignIn }) {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError('');
 
@@ -42,7 +46,7 @@ function PasswordReset({ onBackToSignIn }) {
       setEmailSent(true);
       setEmail('');
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending reset email:', error);
       setError(error.message || 'Failed to send reset email. Please try again.');
     } finally {

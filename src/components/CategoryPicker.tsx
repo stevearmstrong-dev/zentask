@@ -1,12 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-function CategoryPicker({ selectedCategory, onSelectCategory }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [customCategory, setCustomCategory] = useState('');
-  const [showCustomInput, setShowCustomInput] = useState(false);
-  const dropdownRef = useRef(null);
+interface CategoryPickerProps {
+  selectedCategory?: string;
+  onSelectCategory: (category: string) => void;
+}
 
-  const predefinedCategories = [
+interface CategoryOption {
+  value: string;
+  label: string;
+}
+
+function CategoryPicker({ selectedCategory, onSelectCategory }: CategoryPickerProps) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [customCategory, setCustomCategory] = useState<string>('');
+  const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const predefinedCategories: CategoryOption[] = [
     { value: '', label: 'No Category' },
     { value: 'Work', label: 'Work' },
     { value: 'Personal', label: 'Personal' },
@@ -25,8 +35,8 @@ function CategoryPicker({ selectedCategory, onSelectCategory }) {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         setShowCustomInput(false);
         setCustomCategory('');
@@ -42,14 +52,14 @@ function CategoryPicker({ selectedCategory, onSelectCategory }) {
     };
   }, [isOpen]);
 
-  const handleCategorySelect = (value) => {
+  const handleCategorySelect = (value: string): void => {
     onSelectCategory(value);
     setIsOpen(false);
     setShowCustomInput(false);
     setCustomCategory('');
   };
 
-  const handleCustomInputSubmit = () => {
+  const handleCustomInputSubmit = (): void => {
     if (customCategory.trim()) {
       onSelectCategory(customCategory.trim());
       setIsOpen(false);
@@ -58,7 +68,7 @@ function CategoryPicker({ selectedCategory, onSelectCategory }) {
     }
   };
 
-  const handleCustomInputKeyPress = (e) => {
+  const handleCustomInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
       handleCustomInputSubmit();
     } else if (e.key === 'Escape') {
