@@ -376,9 +376,9 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
                 // Position: slot base + padding + minute offset within content area
                 const topPosition = slotIndex * SLOT_HEIGHT + SLOT_PADDING + (startMinutes / 60) * CONTENT_HEIGHT;
 
-                // Height based on duration, scaled to content area
+                // Height based on duration - use SLOT_HEIGHT to span across multiple slots correctly
                 const durationInMinutes = task.scheduledDuration || 60;
-                const heightInPx = (durationInMinutes / 60) * CONTENT_HEIGHT;
+                const heightInPx = (durationInMinutes / 60) * SLOT_HEIGHT;
 
                 return (
                   <div
