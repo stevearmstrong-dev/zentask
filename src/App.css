@@ -6412,7 +6412,7 @@ body {
   padding: 4px 0;
   position: relative;
   overflow: visible;
-  align-items: center;
+  align-items: start;
 }
 
 .time-slot:last-child {
@@ -6423,7 +6423,7 @@ body {
   font-size: 12px;
   font-weight: 500;
   color: #666;
-  padding-top: 0;
+  padding-top: 8px;
 }
 
 .time-content {
@@ -6459,11 +6459,11 @@ body {
 
 .time-slot-empty {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 8px;
   color: #ccc;
-  font-size: 14px;
+  font-size: 12px;
   opacity: 0.3;
   pointer-events: none;
 }
