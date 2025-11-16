@@ -378,7 +378,9 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
 
                 // Height based on duration - use SLOT_HEIGHT to span across multiple slots correctly
                 const durationInMinutes = task.scheduledDuration || 60;
-                const heightInPx = (durationInMinutes / 60) * SLOT_HEIGHT;
+                const calculatedHeight = (durationInMinutes / 60) * SLOT_HEIGHT;
+                // Ensure minimum height for readability (at least 70px for content)
+                const heightInPx = Math.max(calculatedHeight, 70);
 
                 return (
                   <div
