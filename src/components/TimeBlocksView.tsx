@@ -74,6 +74,10 @@ function DraggableBlock({ task, getPriorityColor, onUnschedule, onTaskClick, onE
     data: { task, type: 'scheduled' },
   });
 
+  // Calculate height based on duration (80px per hour)
+  const durationInMinutes = task.scheduledDuration || 60;
+  const heightInPx = (durationInMinutes / 60) * 80;
+
   const style = {
     transform: CSS.Transform.toString(transform),
     opacity: isDragging ? 0.5 : 1,
@@ -87,6 +91,7 @@ function DraggableBlock({ task, getPriorityColor, onUnschedule, onTaskClick, onE
       style={{
         ...style,
         borderLeft: `4px solid ${getPriorityColor(task.priority)}`,
+        minHeight: `${heightInPx}px`,
       }}
       {...listeners}
       {...attributes}
@@ -266,22 +271,16 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
     });
   };
 
-  // Get all tasks scheduled in a specific hour, sorted by start time
+  // Get all tasks that START in a specific hour, sorted by start time
   const getTasksAtHour = (hour: number) => {
     return scheduledTasks
       .filter((task) => {
         if (!task.scheduledStart) return false;
         const taskStart = new Date(task.scheduledStart);
-        const taskEnd = new Date(taskStart.getTime() + (task.scheduledDuration || 60) * 60000);
+        const taskHour = taskStart.getHours();
 
-        // Check if task starts or overlaps with this hour
-        const slotStart = new Date(selectedDate);
-        slotStart.setHours(hour, 0, 0, 0);
-        const slotEnd = new Date(selectedDate);
-        slotEnd.setHours(hour + 1, 0, 0, 0);
-
-        // Task overlaps if it starts before slot ends AND ends after slot starts
-        return taskStart < slotEnd && taskEnd > slotStart;
+        // Only show task in the slot where it STARTS
+        return taskHour === hour;
       })
       .sort((a, b) => {
         // Sort by start time (earliest first)
