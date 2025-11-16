@@ -226,9 +226,17 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
   const generateTimeSlots = () => {
     const slots = [];
     for (let hour = 8; hour <= 20; hour++) {
+      let label;
+      if (hour === 12) {
+        label = '12:00 PM'; // Noon
+      } else if (hour > 12) {
+        label = `${hour - 12}:00 PM`;
+      } else {
+        label = `${hour}:00 AM`;
+      }
       slots.push({
         hour,
-        label: hour > 12 ? `${hour - 12}:00 PM` : `${hour}:00 AM`,
+        label,
         time: `${hour}:00`,
       });
     }
