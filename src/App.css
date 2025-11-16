@@ -3976,6 +3976,155 @@ body {
   cursor: not-allowed;
 }
 
+/* Duration Picker Styles */
+.duration-picker-wrapper {
+  position: relative;
+  display: inline-block;
+  flex: 1;
+  min-width: 120px;
+}
+
+.duration-trigger {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f5f5f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.duration-trigger:hover {
+  background: #e8e8ed;
+  border-color: #73abff;
+}
+
+.duration-icon {
+  font-size: 14px;
+}
+
+.duration-display {
+  flex: 1;
+  text-align: left;
+}
+
+.duration-arrow {
+  font-size: 10px;
+  color: #86868b;
+}
+
+.duration-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  padding: 12px;
+}
+
+.duration-picker-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.duration-picker-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.duration-presets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.duration-preset-btn {
+  padding: 8px 12px;
+  background: #f5f5f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.duration-preset-btn:hover {
+  background: rgba(115, 171, 255, 0.1);
+  border-color: #73abff;
+}
+
+.duration-preset-btn.selected {
+  background: #73abff;
+  border-color: #73abff;
+  color: white;
+}
+
+.duration-picker-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.duration-clear-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #86868b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.duration-clear-btn:hover {
+  background: #f5f5f7;
+  color: #1d1d1f;
+}
+
+.dark-mode .duration-trigger {
+  background: #3a3a3c;
+  border-color: #48484a;
+  color: #f5f5f7;
+}
+
+.dark-mode .duration-trigger:hover {
+  background: #48484a;
+}
+
+.dark-mode .duration-dropdown {
+  background: #2c2c2e;
+  border: 1px solid #48484a;
+}
+
+.dark-mode .duration-picker-title {
+  color: #f5f5f7;
+}
+
+.dark-mode .duration-preset-btn {
+  background: #3a3a3c;
+  border-color: #48484a;
+  color: #f5f5f7;
+}
+
+.dark-mode .duration-preset-btn:hover {
+  background: rgba(115, 171, 255, 0.2);
+}
+
 /* Time Picker Form Integration */
 .form-options .time-picker-wrapper {
   flex: 1;
@@ -6314,7 +6463,9 @@ body {
   justify-content: center;
   height: 100%;
   color: #ccc;
-  font-size: 18px;
+  font-size: 14px;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 /* Time Block (Scheduled Task) */

@@ -3,6 +3,7 @@ import { Priority, Recurrence } from '../types';
 import CalendarPicker from './CalendarPicker';
 import CategoryPicker from './CategoryPicker';
 import TimePicker from './TimePicker';
+import DurationPicker from './DurationPicker';
 import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
 import RecurrencePicker from './RecurrencePicker';
@@ -16,6 +17,7 @@ interface NewTask {
   category: string;
   reminderMinutes: number | null;
   recurrence: Recurrence | null;
+  scheduledDuration?: number;
 }
 
 interface ToDoFormProps {
@@ -27,6 +29,7 @@ function ToDoForm({ addTask }: ToDoFormProps) {
   const [priority, setPriority] = useState<Priority>('medium');
   const [dueDate, setDueDate] = useState<string>('');
   const [dueTime, setDueTime] = useState<string>('');
+  const [duration, setDuration] = useState<number | undefined>(undefined);
   const [category, setCategory] = useState<string>('');
   const [reminderMinutes, setReminderMinutes] = useState<number | string>('15');
   const [recurrence, setRecurrence] = useState<Recurrence | null>(null);
@@ -51,12 +54,14 @@ function ToDoForm({ addTask }: ToDoFormProps) {
         dueTime: dueTime,
         category: category.trim(),
         reminderMinutes: reminderMinutes ? parseInt(reminderMinutes.toString()) : null,
-        recurrence: recurrence
+        recurrence: recurrence,
+        scheduledDuration: duration
       });
       setInput('');
       setPriority('medium');
       setDueDate('');
       setDueTime('');
+      setDuration(undefined);
       setCategory('');
       setReminderMinutes('15');
       setRecurrence(null);
@@ -122,6 +127,11 @@ function ToDoForm({ addTask }: ToDoFormProps) {
         <TimePicker
           selectedTime={dueTime}
           onSelectTime={setDueTime}
+        />
+
+        <DurationPicker
+          selectedDuration={duration}
+          onSelectDuration={setDuration}
         />
 
         <CategoryPicker

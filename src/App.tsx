@@ -261,6 +261,7 @@ function App() {
       timeSpent: 0,
       isTracking: false,
       trackingStartTime: null,
+      scheduledDuration: taskData.scheduledDuration,
     };
 
     // Save to Supabase if user is signed in
