@@ -4056,27 +4056,26 @@ body {
 }
 
 .duration-preset-btn {
-  padding: 8px 12px;
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
-  border: 1px solid rgba(115, 171, 255, 0.25);
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 500;
-  color: #f5f5f7;
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .duration-preset-btn:hover {
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.1) 100%);
-  border-color: rgba(115, 171, 255, 0.5);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  color: #f5f5f7;
 }
 
 .duration-preset-btn.selected {
-  background: linear-gradient(135deg, #73abff 0%, #5d95e8 100%);
-  border-color: #73abff;
-  color: white;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.1) 100%);
+  color: #73abff;
+  font-weight: 600;
 }
 
 .duration-picker-actions {
@@ -4085,20 +4084,20 @@ body {
 }
 
 .duration-clear-btn {
-  padding: 6px 12px;
+  padding: 8px 16px;
   background: transparent;
-  border: 1px solid rgba(115, 171, 255, 0.3);
-  border-radius: 6px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   font-size: 12px;
   font-weight: 500;
-  color: rgba(245, 245, 247, 0.7);
+  color: rgba(245, 245, 247, 0.6);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .duration-clear-btn:hover {
-  background: rgba(115, 171, 255, 0.1);
-  border-color: rgba(115, 171, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.5);
   color: #f5f5f7;
 }
 
@@ -4123,14 +4122,13 @@ body {
 }
 
 .dark-mode .duration-preset-btn {
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
-  border-color: rgba(115, 171, 255, 0.25);
-  color: #f5f5f7;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .dark-mode .duration-preset-btn:hover {
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.1) 100%);
-  border-color: rgba(115, 171, 255, 0.5);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
+  color: #f5f5f7;
 }
 
 /* Time Picker Form Integration */
