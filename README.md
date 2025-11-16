@@ -438,13 +438,13 @@ Planned features for future releases:
 - [x] **Recurring Tasks**: Daily, weekly, biweekly, monthly, yearly auto-regeneration ✓
 - [x] **Time Tracking**: Track actual time spent on tasks ✓
 - [x] **Eisenhower Matrix**: Urgent/Important quadrant view ✓
+- [x] **Focus Mode**: Distraction-free single-task view with time tracking and Pomodoro ✓
 - [ ] **Subtasks**: Break tasks into smaller checklist items
 - [ ] **Kanban Board**: Drag-and-drop task workflow
 - [ ] **Habit Tracker**: Daily habits with streak counters
 - [ ] **Tags System**: Multiple tags per task
 - [ ] **Calendar View**: Monthly/weekly calendar visualization
-- [ ] **Keyboard Shortcuts**: Power user shortcuts
-- [ ] **Focus Mode**: Distraction-free single-task view
+- [ ] **Keyboard Shortcuts**: Global power user shortcuts
 - [ ] **Task Templates**: Pre-defined task templates
 - [ ] **Export/Import**: Backup and migrate tasks
 
