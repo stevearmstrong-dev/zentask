@@ -5193,6 +5193,16 @@ body {
   opacity: 0.8;
 }
 
+.picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  background: transparent;
+}
+
 .recurrence-dropdown {
   position: absolute;
   top: calc(100% + 8px);
