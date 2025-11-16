@@ -3625,7 +3625,7 @@ body {
 
 .time-trigger {
   width: 100%;
-  padding: 12px 16px;
+  padding: 16px 16px;
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
   border: 1px solid rgba(115, 171, 255, 0.2);
   border-radius: 12px;
@@ -3986,7 +3986,7 @@ body {
 
 .duration-trigger {
   width: 100%;
-  padding: 12px 16px;
+  padding: 16px 16px;
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.05) 0%, rgba(115, 171, 255, 0.02) 100%);
   border: 1px solid rgba(115, 171, 255, 0.2);
   border-radius: 12px;
