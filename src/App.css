@@ -6774,3 +6774,358 @@ body {
   background: rgba(115, 171, 255, 0.15) !important;
   border-color: #73abff !important;
 }
+
+/* ===========================
+   Multi-Task Display & Custom Times
+   =========================== */
+
+/* Multiple tasks in same slot */
+.time-slot-tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Time block with custom times */
+.time-block-time {
+  font-size: 11px;
+  color: #73abff;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-family: 'Courier New', monospace;
+}
+
+.time-block-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.time-block-edit {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.time-block-edit:hover {
+  opacity: 1;
+}
+
+.time-block-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.time-block-remove:hover {
+  opacity: 1;
+  color: #ff6b6b;
+}
+
+/* ===========================
+   Time Block Editor Modal
+   =========================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+
+.time-block-editor {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.editor-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #111722;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111722;
+}
+
+.editor-content {
+  padding: 24px;
+}
+
+.task-name {
+  margin-bottom: 24px;
+  padding: 12px;
+  background: rgba(115, 171, 255, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111722;
+}
+
+.time-section,
+.duration-section {
+  margin-bottom: 20px;
+}
+
+.time-section label,
+.duration-section label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111722;
+  margin-bottom: 8px;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-select {
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: white;
+  transition: border-color 0.2s;
+  min-width: 100px;
+}
+
+.time-select:hover {
+  border-color: #73abff;
+}
+
+.time-select:focus {
+  outline: none;
+  border-color: #73abff;
+}
+
+.time-separator {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111722;
+}
+
+.duration-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.duration-preset {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.duration-preset:hover {
+  border-color: #73abff;
+  background: rgba(115, 171, 255, 0.05);
+}
+
+.duration-preset.active {
+  background: #73abff;
+  border-color: #73abff;
+  color: white;
+}
+
+.custom-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.duration-input {
+  padding: 10px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100px;
+}
+
+.duration-input:focus {
+  outline: none;
+  border-color: #73abff;
+}
+
+.custom-duration span {
+  font-size: 13px;
+  color: #666;
+}
+
+.end-time-display {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(81, 207, 102, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #40c057;
+  font-weight: 600;
+  text-align: center;
+}
+
+.editor-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.cancel-btn {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+}
+
+.save-btn {
+  background: #73abff;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #5d95e8;
+}
+
+/* Dark Mode - Time Block Editor */
+.dark-mode .time-block-editor {
+  background: rgba(17, 23, 34, 0.95);
+}
+
+.dark-mode .editor-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .editor-header h3 {
+  color: #f5f5f7;
+}
+
+.dark-mode .close-btn {
+  color: #999;
+}
+
+.dark-mode .close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f7;
+}
+
+.dark-mode .task-name {
+  background: rgba(115, 171, 255, 0.15);
+  color: #f5f5f7;
+}
+
+.dark-mode .time-section label,
+.dark-mode .duration-section label {
+  color: #f5f5f7;
+}
+
+.dark-mode .time-select,
+.dark-mode .duration-input {
+  background: rgba(30, 38, 52, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f5f5f7;
+}
+
+.dark-mode .time-separator {
+  color: #f5f5f7;
+}
+
+.dark-mode .duration-preset {
+  background: rgba(30, 38, 52, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f5f5f7;
+}
+
+.dark-mode .duration-preset:hover {
+  background: rgba(115, 171, 255, 0.15);
+  border-color: #73abff;
+}
+
+.dark-mode .duration-preset.active {
+  background: #73abff;
+  border-color: #73abff;
+  color: white;
+}
+
+.dark-mode .editor-footer {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f5f5f7;
+}
+
+.dark-mode .cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dark-mode .time-block-time {
+  color: #73abff;
+}

@@ -11,6 +11,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import TimeBlockEditor from './TimeBlockEditor';
 
 interface TimeBlocksViewProps {
   tasks: Task[];
@@ -64,9 +65,10 @@ interface DraggableBlockProps {
   getPriorityColor: (priority: string) => string;
   onUnschedule: (task: Task) => void;
   onTaskClick: (task: Task) => void;
+  onEdit: (task: Task) => void;
 }
 
-function DraggableBlock({ task, getPriorityColor, onUnschedule, onTaskClick }: DraggableBlockProps) {
+function DraggableBlock({ task, getPriorityColor, onUnschedule, onTaskClick, onEdit }: DraggableBlockProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `scheduled-${task.id}`,
     data: { task, type: 'scheduled' },
@@ -91,16 +93,35 @@ function DraggableBlock({ task, getPriorityColor, onUnschedule, onTaskClick }: D
     >
       <div className="time-block-header">
         <span className="time-block-title">{task.text}</span>
-        <button
-          className="time-block-remove"
-          onClick={(e) => {
-            e.stopPropagation();
-            onUnschedule(task);
-          }}
-          title="Unschedule"
-        >
-          ×
-        </button>
+        <div className="time-block-actions">
+          <button
+            className="time-block-edit"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(task);
+            }}
+            title="Edit time"
+          >
+            ✏️
+          </button>
+          <button
+            className="time-block-remove"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUnschedule(task);
+            }}
+            title="Unschedule"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <div className="time-block-time">
+        {task.scheduledStart && (() => {
+          const start = new Date(task.scheduledStart);
+          const end = new Date(start.getTime() + (task.scheduledDuration || 60) * 60000);
+          return `${start.getHours()}:${start.getMinutes().toString().padStart(2, '0')} - ${end.getHours()}:${end.getMinutes().toString().padStart(2, '0')}`;
+        })()}
       </div>
       <div className="time-block-meta">
         {task.category && (
@@ -149,6 +170,7 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedDate] = useState<Date>(new Date());
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   // Set up drag sensors
   const sensors = useSensors(
@@ -236,12 +258,21 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
     });
   };
 
-  // Get task scheduled at a specific hour
-  const getTaskAtHour = (hour: number) => {
-    return scheduledTasks.find((task) => {
+  // Get all tasks scheduled in a specific hour
+  const getTasksAtHour = (hour: number) => {
+    return scheduledTasks.filter((task) => {
       if (!task.scheduledStart) return false;
-      const taskHour = new Date(task.scheduledStart).getHours();
-      return taskHour === hour;
+      const taskStart = new Date(task.scheduledStart);
+      const taskEnd = new Date(taskStart.getTime() + (task.scheduledDuration || 60) * 60000);
+
+      // Check if task starts or overlaps with this hour
+      const slotStart = new Date(selectedDate);
+      slotStart.setHours(hour, 0, 0, 0);
+      const slotEnd = new Date(selectedDate);
+      slotEnd.setHours(hour + 1, 0, 0, 0);
+
+      // Task overlaps if it starts before slot ends AND ends after slot starts
+      return taskStart < slotEnd && taskEnd > slotStart;
     });
   };
 
@@ -308,19 +339,25 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
           <h3>Today's Schedule</h3>
           <div className="timeline">
             {timeSlots.map((slot) => {
-              const taskAtSlot = getTaskAtHour(slot.hour);
+              const tasksAtSlot = getTasksAtHour(slot.hour);
 
               return (
                 <div key={slot.hour} className="time-slot">
                   <div className="time-label">{slot.label}</div>
                   <DroppableSlot hour={slot.hour}>
-                    {taskAtSlot ? (
-                      <DraggableBlock
-                        task={taskAtSlot}
-                        getPriorityColor={getPriorityColor}
-                        onUnschedule={unscheduleTask}
-                        onTaskClick={onTaskClick}
-                      />
+                    {tasksAtSlot.length > 0 ? (
+                      <div className="time-slot-tasks">
+                        {tasksAtSlot.map((task) => (
+                          <DraggableBlock
+                            key={task.id}
+                            task={task}
+                            getPriorityColor={getPriorityColor}
+                            onUnschedule={unscheduleTask}
+                            onTaskClick={onTaskClick}
+                            onEdit={setEditingTask}
+                          />
+                        ))}
+                      </div>
                     ) : (
                       <div className="time-slot-empty">Drop here</div>
                     )}
@@ -350,6 +387,18 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
           </div>
         ) : null}
       </DragOverlay>
+
+      {/* Time Block Editor Modal */}
+      {editingTask && (
+        <TimeBlockEditor
+          task={editingTask}
+          onSave={(updates) => {
+            onUpdateTask(editingTask.id, updates);
+            setEditingTask(null);
+          }}
+          onClose={() => setEditingTask(null)}
+        />
+      )}
     </DndContext>
   );
 }
