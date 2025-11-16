@@ -3079,8 +3079,8 @@ body {
 
 /* Calendar Picker Form Integration */
 .form-options .calendar-picker-wrapper {
-  flex: 1;
-  min-width: 140px;
+  min-width: 180px;
+  flex-shrink: 0;
 }
 
 /* Calendar Picker in Edit Mode */
@@ -3405,7 +3405,7 @@ body {
 /* Category Picker Form Integration */
 .form-options .category-picker-wrapper {
   flex: 1;
-  min-width: 140px;
+  min-width: 160px;
 }
 
 .edit-options .category-picker-wrapper {
@@ -4018,8 +4018,7 @@ body {
 
 .duration-arrow {
   font-size: 10px;
-  color: #73abff;
-  margin-left: auto;
+  color: #86868b;
 }
 
 .duration-dropdown {
@@ -4132,13 +4131,7 @@ body {
 /* Time Picker Form Integration */
 .form-options .time-picker-wrapper {
   flex: 1;
-  min-width: 140px;
-}
-
-/* Duration Picker Form Integration */
-.form-options .duration-picker-wrapper {
-  flex: 1;
-  min-width: 140px;
+  min-width: 150px;
 }
 
 .edit-options .time-picker-wrapper {
@@ -4378,7 +4371,7 @@ body {
 /* Priority Picker Form Integration */
 .form-options .priority-picker-wrapper {
   flex: 1;
-  min-width: 140px;
+  min-width: 160px;
 }
 
 .edit-options .priority-picker-wrapper {
@@ -4581,7 +4574,7 @@ body {
 /* Reminder Picker Form Integration */
 .form-options .reminder-picker-wrapper {
   flex: 1;
-  min-width: 140px;
+  min-width: 160px;
 }
 
 .edit-options .reminder-picker-wrapper {
@@ -5144,7 +5137,8 @@ body {
   position: relative;
   display: inline-block;
   flex: 1;
-  min-width: 140px;
+  min-width: 150px;
+  max-width: 200px;
   align-self: stretch;
 }
 
