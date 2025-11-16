@@ -42,11 +42,11 @@ function TimeBlockEditor({ task, onSave, onClose }: TimeBlockEditorProps) {
     { label: '3 hours', value: 180 },
   ];
 
-  const formatHour = (hour: number) => {
-    if (hour === 0) return '12 AM';
-    if (hour < 12) return `${hour} AM`;
-    if (hour === 12) return '12 PM';
-    return `${hour - 12} PM`;
+  const formatTime = (hour: number, minute: number) => {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const displayMinute = minute.toString().padStart(2, '0');
+    return `${displayHour}:${displayMinute} ${period}`;
   };
 
   return (
@@ -70,9 +70,11 @@ function TimeBlockEditor({ task, onSave, onClose }: TimeBlockEditorProps) {
                 onChange={(e) => setHours(Number(e.target.value))}
                 className="time-select"
               >
-                {hourOptions.map(h => (
-                  <option key={h} value={h}>{formatHour(h)}</option>
-                ))}
+                {hourOptions.map(h => {
+                  const period = h >= 12 ? 'PM' : 'AM';
+                  const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+                  return <option key={h} value={h}>{displayHour} {period}</option>;
+                })}
               </select>
               <span className="time-separator">:</span>
               <select
@@ -84,6 +86,9 @@ function TimeBlockEditor({ task, onSave, onClose }: TimeBlockEditorProps) {
                   <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
                 ))}
               </select>
+            </div>
+            <div className="start-time-preview">
+              Starts at {formatTime(hours, minutes)}
             </div>
           </div>
 
@@ -118,7 +123,7 @@ function TimeBlockEditor({ task, onSave, onClose }: TimeBlockEditorProps) {
             {(() => {
               const endTime = new Date(taskDate);
               endTime.setHours(hours, minutes + duration, 0, 0);
-              return `Ends at ${formatHour(endTime.getHours())}:${endTime.getMinutes().toString().padStart(2, '0')}`;
+              return `Ends at ${formatTime(endTime.getHours(), endTime.getMinutes())}`;
             })()}
           </div>
         </div>
