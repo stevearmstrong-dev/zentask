@@ -364,17 +364,21 @@ function TimeBlocksView({ tasks, onUpdateTask, onTaskClick }: TimeBlocksViewProp
                 const startHour = hours;
                 const startMinutes = minutes;
 
-                // Calculate top position based on hour (each slot is 104px)
-                // First slot starts at hour 8
+                // Slot structure: 104px total = 12px padding + 80px content + 12px padding
+                const SLOT_HEIGHT = 104;
+                const SLOT_PADDING = 12;
+                const CONTENT_HEIGHT = 80;
+
+                // Calculate which slot this task starts in
                 const slotIndex = startHour - 8;
                 if (slotIndex < 0 || slotIndex > 12) return null; // Outside visible range
 
-                // Each slot is 104px, add offset for minutes within the hour
-                const topPosition = slotIndex * 104 + (startMinutes / 60) * 104;
+                // Position: slot base + padding + minute offset within content area
+                const topPosition = slotIndex * SLOT_HEIGHT + SLOT_PADDING + (startMinutes / 60) * CONTENT_HEIGHT;
 
-                // Calculate height based on duration (use scheduledDuration if set, otherwise default 60 min)
+                // Height based on duration, scaled to content area
                 const durationInMinutes = task.scheduledDuration || 60;
-                const heightInPx = (durationInMinutes / 60) * 104;
+                const heightInPx = (durationInMinutes / 60) * CONTENT_HEIGHT;
 
                 return (
                   <div
