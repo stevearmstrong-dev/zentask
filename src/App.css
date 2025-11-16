@@ -4008,6 +4008,11 @@ body {
   box-shadow: 0 4px 12px rgba(115, 171, 255, 0.15);
 }
 
+.duration-trigger:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(115, 171, 255, 0.1);
+}
+
 .duration-icon {
   font-size: 1.1rem;
   flex-shrink: 0;
@@ -5181,6 +5186,11 @@ body {
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(115, 171, 255, 0.15);
+}
+
+.recurrence-picker .picker-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(115, 171, 255, 0.1);
 }
 
 .dark-mode .recurrence-picker .picker-button:hover {
