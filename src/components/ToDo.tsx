@@ -6,6 +6,7 @@ import TimePicker from './TimePicker';
 import PriorityPicker from './PriorityPicker';
 import ReminderPicker from './ReminderPicker';
 import TimeTracker from './TimeTracker';
+import TimeBlockEditor from './TimeBlockEditor';
 
 interface ToDoProps {
   task: Task;
@@ -24,6 +25,7 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime, onFocu
   const [editDueTime, setEditDueTime] = useState<string>(task.dueTime || '');
   const [editCategory, setEditCategory] = useState<string>(task.category || '');
   const [editReminderMinutes, setEditReminderMinutes] = useState<number | string>(task.reminderMinutes || '');
+  const [showScheduler, setShowScheduler] = useState<boolean>(false);
 
   const handleEdit = (): void => {
     if (editValue.trim()) {
@@ -195,6 +197,15 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime, onFocu
                 🎯 Focus
               </button>
             )}
+            {!task.completed && (
+              <button
+                className="btn-schedule"
+                onClick={() => setShowScheduler(true)}
+                title={task.scheduledStart ? "Reschedule" : "Schedule for Time Block"}
+              >
+                {task.scheduledStart ? '🕒 Scheduled' : '🕒 Schedule'}
+              </button>
+            )}
             <button
               className="btn-edit"
               onClick={() => setIsEditing(true)}
@@ -207,6 +218,18 @@ function ToDo({ task, toggleComplete, deleteTask, editTask, onUpdateTime, onFocu
             </button>
           </div>
         </>
+      )}
+
+      {/* Time Block Scheduler Modal */}
+      {showScheduler && (
+        <TimeBlockEditor
+          task={task}
+          onSave={(updates) => {
+            editTask(task.id, updates);
+            setShowScheduler(false);
+          }}
+          onClose={() => setShowScheduler(false)}
+        />
       )}
     </div>
   );
