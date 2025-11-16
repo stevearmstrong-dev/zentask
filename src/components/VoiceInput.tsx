@@ -13,12 +13,20 @@ interface VoiceInputProps {
   onInterimTranscript?: (text: string) => void;
   onError?: (error: string) => void;
   onAddTask?: () => void;
+  inputValue?: string;
 }
 
-function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask }: VoiceInputProps) {
+function VoiceInput({ onTranscript, onInterimTranscript, onError, onAddTask, inputValue = '' }: VoiceInputProps) {
   const [isListening, setIsListening] = useState<boolean>(false);
   const [isSupported, setIsSupported] = useState<boolean>(true);
   const [speechCaptured, setSpeechCaptured] = useState<boolean>(false);
+
+  // Reset speechCaptured when input is cleared
+  useEffect(() => {
+    if (speechCaptured && inputValue === '') {
+      setSpeechCaptured(false);
+    }
+  }, [inputValue, speechCaptured]);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const finalTranscriptRef = useRef<string>('');
   const isListeningRef = useRef<boolean>(false);

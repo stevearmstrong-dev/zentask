@@ -107,6 +107,7 @@ function ToDoForm({ addTask }: ToDoFormProps) {
             onInterimTranscript={handleInterimTranscript}
             onError={handleVoiceError}
             onAddTask={handleVoiceAddTask}
+            inputValue={input}
           />
         </div>
         {voiceError && <p className="voice-error">{voiceError}</p>}
