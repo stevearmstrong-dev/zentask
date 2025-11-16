@@ -4027,13 +4027,18 @@ body {
   left: 0;
   right: 0;
   min-width: 200px;
-  background: rgba(30, 38, 52, 0.95);
-  border: 1px solid rgba(115, 171, 255, 0.2);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.25);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(115, 171, 255, 0.15);
   z-index: 1000;
   padding: 12px;
   backdrop-filter: blur(10px);
+}
+
+.dark-mode .duration-dropdown {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.12) 0%, rgba(115, 171, 255, 0.05) 100%);
+  border-color: rgba(115, 171, 255, 0.3);
 }
 
 .duration-picker-header {
@@ -4057,23 +4062,31 @@ body {
 
 .duration-preset-btn {
   padding: 10px 14px;
-  background: transparent;
-  border: none;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.1) 0%, rgba(115, 171, 255, 0.05) 100%);
+  border: 1px solid rgba(115, 171, 255, 0.2);
   border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  color: #1d1d1f;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.duration-preset-btn:hover {
+.dark-mode .duration-preset-btn {
+  color: rgba(255, 255, 255, 0.9);
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
-  color: #f5f5f7;
+  border-color: rgba(115, 171, 255, 0.25);
+}
+
+.duration-preset-btn:hover {
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.12) 100%);
+  border-color: rgba(115, 171, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 .duration-preset-btn.selected {
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.3) 0%, rgba(115, 171, 255, 0.2) 100%);
+  border-color: #73abff;
   color: #73abff;
   font-weight: 600;
 }
@@ -4110,25 +4123,6 @@ body {
 .dark-mode .duration-trigger:hover {
   background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
   border-color: rgba(115, 171, 255, 0.4);
-}
-
-.dark-mode .duration-dropdown {
-  background: #2c2c2e;
-  border: 1px solid #48484a;
-}
-
-.dark-mode .duration-picker-title {
-  color: #f5f5f7;
-}
-
-.dark-mode .duration-preset-btn {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.dark-mode .duration-preset-btn:hover {
-  background: linear-gradient(135deg, rgba(115, 171, 255, 0.15) 0%, rgba(115, 171, 255, 0.08) 100%);
-  color: #f5f5f7;
 }
 
 /* Time Picker Form Integration */
