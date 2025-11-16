@@ -4123,13 +4123,14 @@ body {
 }
 
 .dark-mode .duration-preset-btn {
-  background: #3a3a3c;
-  border-color: #48484a;
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.08) 0%, rgba(115, 171, 255, 0.03) 100%);
+  border-color: rgba(115, 171, 255, 0.25);
   color: #f5f5f7;
 }
 
 .dark-mode .duration-preset-btn:hover {
-  background: rgba(115, 171, 255, 0.2);
+  background: linear-gradient(135deg, rgba(115, 171, 255, 0.2) 0%, rgba(115, 171, 255, 0.1) 100%);
+  border-color: rgba(115, 171, 255, 0.5);
 }
 
 /* Time Picker Form Integration */
