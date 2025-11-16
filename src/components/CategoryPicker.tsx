@@ -77,7 +77,7 @@ function CategoryPicker({ selectedCategory, onSelectCategory }: CategoryPickerPr
     }
   };
 
-  const displayText = selectedCategory || 'Category (optional)';
+  const displayText = selectedCategory || 'Category';
   const isPredefined = predefinedCategories.some(cat => cat.value === selectedCategory);
 
   return (
