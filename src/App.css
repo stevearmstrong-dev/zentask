@@ -5320,7 +5320,7 @@ body {
   border-color: rgba(115, 171, 255, 0.3);
 }
 
-.time-display {
+.time-tracker .time-display {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -5329,7 +5329,7 @@ body {
   color: #4a4a4a;
 }
 
-.dark-mode .time-display {
+.dark-mode .time-tracker .time-display {
   color: #e0e0e0;
 }
 
