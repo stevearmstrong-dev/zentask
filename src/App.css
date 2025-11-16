@@ -6407,11 +6407,12 @@ body {
   display: grid;
   grid-template-columns: 100px 1fr;
   gap: 16px;
-  height: 104px; /* Fixed height: 80px content + 24px padding */
+  min-height: 80px;
   border-bottom: 1px solid #e9ecef;
-  padding: 12px 0;
+  padding: 0;
   position: relative;
   overflow: visible;
+  align-items: start;
 }
 
 .time-slot:last-child {
@@ -6422,7 +6423,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   color: #666;
-  padding-top: 4px;
+  padding-top: 0;
 }
 
 .time-content {
