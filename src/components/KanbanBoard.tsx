@@ -7,7 +7,6 @@ import {
   DragEndEvent,
 } from '@dnd-kit/core';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { Task, TaskStatus } from '../types';
 
 interface KanbanBoardProps {
@@ -216,6 +215,13 @@ interface KanbanTaskCardProps {
   onDeleteTask: (taskId: number) => void;
 }
 
+const getRoundedTransform = (transform: { x: number; y: number } | null) => {
+  if (!transform) return undefined;
+  const x = Math.round(transform.x);
+  const y = Math.round(transform.y);
+  return `translate3d(${x}px, ${y}px, 0)`;
+};
+
 const KanbanTaskCard: React.FC<KanbanTaskCardProps> = ({
   task,
   onToggleComplete,
@@ -227,7 +233,7 @@ const KanbanTaskCard: React.FC<KanbanTaskCardProps> = ({
 
   const style = transform
     ? {
-        transform: CSS.Transform.toString(transform),
+        transform: getRoundedTransform(transform),
       }
     : undefined;
 
