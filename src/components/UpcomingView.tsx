@@ -6,6 +6,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  UniqueIdentifier,
 } from '@dnd-kit/core';
 import { useDroppable } from '@dnd-kit/core';
 import {
@@ -29,16 +30,23 @@ interface UpcomingViewProps {
   onFocus?: (task: Task) => void;
 }
 
-const DAYS_TO_SHOW = 7;
+const DAYS_TO_SHOW = 14;
 
 const getStartOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-const parseTaskDate = (task: Task): Date | null => {
-  if (!task.dueDate) return null;
-  const [year, month, day] = task.dueDate.split('-').map(Number);
-  return new Date(year, month - 1, day);
+const formatKey = (date: Date): string =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+const formatDisplayLabel = (date: Date, base: Date): string => {
+  const diffDays = Math.round((date.getTime() - base.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Tomorrow';
+  if (diffDays === 1) return 'In 2 days';
+  return date.toLocaleDateString('en-US', { weekday: 'short' });
 };
+
+const formatFullDate = (date: Date): string =>
+  date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
 const deriveDisplayTime = (task: Task): string => {
   if (task.dueTime) {
@@ -56,19 +64,6 @@ const deriveDisplayTime = (task: Task): string => {
   return 'All day';
 };
 
-const formatDayLabel = (date: Date, today: Date): string => {
-  const diffDays = Math.round((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Tomorrow';
-  return date.toLocaleDateString('en-US', { weekday: 'long' });
-};
-
-const formatFullDate = (date: Date): string =>
-  date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-
-const getDayKey = (date: Date): string =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
 const UpcomingView: React.FC<UpcomingViewProps> = ({
   tasks,
   onToggleComplete,
@@ -78,36 +73,39 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
   onFocus,
 }) => {
   const today = getStartOfDay(new Date());
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
+      activationConstraint: { distance: 8 },
     })
   );
 
-  const [activeComposer, setActiveComposer] = useState<string | null>(null);
-  const [newTaskValues, setNewTaskValues] = useState<Record<string, string>>({});
-
   const days = useMemo(() => {
     return Array.from({ length: DAYS_TO_SHOW }, (_, index) => {
-      const date = new Date(today);
+      const date = new Date(tomorrow);
       date.setDate(date.getDate() + index);
-      return date;
+      return {
+        key: formatKey(date),
+        date,
+        navLabel: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        display: formatFullDate(date),
+      };
     });
-  }, [today]);
+  }, [tomorrow]);
+
+  const [selectedDay, setSelectedDay] = useState<string>(days[0]?.key || '');
+  const [composerValue, setComposerValue] = useState('');
 
   const tasksByDay = useMemo(() => {
     const groups: Record<string, Task[]> = {};
-
     tasks.forEach((task) => {
-      const taskDate = parseTaskDate(task);
-      if (!taskDate) return;
-      if (taskDate < today) return;
-
-      const key = task.dueDate as string;
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(task);
+      if (!task.dueDate) return;
+      const dueDate = new Date(task.dueDate);
+      if (dueDate < tomorrow) return;
+      if (!groups[task.dueDate]) groups[task.dueDate] = [];
+      groups[task.dueDate].push(task);
     });
 
     Object.keys(groups).forEach((key) => {
@@ -117,19 +115,21 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
     });
 
     return groups;
-  }, [tasks, today]);
+  }, [tasks, tomorrow]);
 
-  const handleAddTask = (dayKey: string): void => {
-    const value = (newTaskValues[dayKey] || '').trim();
-    if (!value) return;
-    const existing = tasksByDay[dayKey]?.length || 0;
+  const selectedTasks = tasksByDay[selectedDay] || [];
+
+  const handleAddTask = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    const value = composerValue.trim();
+    if (!value || !selectedDay) return;
+    const sortOrder = selectedTasks.length;
     onAddTask({
       text: value,
-      dueDate: dayKey,
-      sortOrder: existing,
+      dueDate: selectedDay,
+      sortOrder,
     });
-    setNewTaskValues((prev) => ({ ...prev, [dayKey]: '' }));
-    setActiveComposer(null);
+    setComposerValue('');
   };
 
   const handleDragEnd = (event: DragEndEvent): void => {
@@ -143,138 +143,129 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
     let targetDay = sourceDay;
     let targetIndex: number | null = null;
 
-    if (over.data?.current?.type === 'task') {
-      targetDay = over.data.current.dayKey;
-      const overTaskId = over.data.current.taskId as number;
-      const targetTasks = (tasksByDay[targetDay] || []).filter((task) => task.id !== taskId);
-      const idx = targetTasks.findIndex((task) => task.id === overTaskId);
-      targetIndex = idx >= 0 ? idx : targetTasks.length;
-    } else if (over.data?.current?.type === 'day') {
-      targetDay = over.data.current.dayKey;
+    const overType = over.data?.current?.type as string | undefined;
+    if (overType === 'task') {
+      targetDay = over.data!.current!.dayKey;
+      const overTaskId = over.data!.current!.taskId as number;
+      const dayTasks = (tasksByDay[targetDay] || []).filter((task) => task.id !== taskId);
+      const idx = dayTasks.findIndex((task) => task.id === overTaskId);
+      targetIndex = idx >= 0 ? idx : dayTasks.length;
+    } else if (overType === 'day-list') {
+      targetDay = over.data!.current!.dayKey;
+      targetIndex = (tasksByDay[targetDay] || []).filter((task) => task.id !== taskId).length;
+    } else if (overType === 'nav') {
+      targetDay = over.data!.current!.dayKey;
+      targetIndex = (tasksByDay[targetDay] || []).filter((task) => task.id !== taskId).length;
     } else {
       return;
     }
 
-    const finalIndex = targetIndex ?? ((tasksByDay[targetDay] || []).filter((task) => task.id !== taskId).length);
     onTaskDrop({
       taskId,
       sourceDate: sourceDay,
       targetDate: targetDay,
-      targetIndex: finalIndex,
+      targetIndex: targetIndex ?? 0,
     });
   };
-
-  const hasUpcomingTasks = Object.keys(tasksByDay).length > 0;
 
   return (
     <div className="upcoming-view">
       <div className="upcoming-header">
         <div>
           <h2>Upcoming</h2>
-          <p>Review the road ahead, just like Todoist.</p>
+          <p>Tap a day to review and rearrange what’s ahead.</p>
         </div>
       </div>
 
-      {!hasUpcomingTasks && (
-        <div className="upcoming-empty">
-          <div className="upcoming-empty-icon">🌤️</div>
-          <h3>No future tasks scheduled</h3>
-          <p>Add due dates to populate this view.</p>
-        </div>
-      )}
+      <div className="upcoming-nav">
+        {days.map((day) => (
+          <NavDayButton
+            key={day.key}
+            day={day}
+            isSelected={day.key === selectedDay}
+            onSelect={() => setSelectedDay(day.key)}
+          />
+        ))}
+      </div>
 
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="upcoming-days">
-          {days.map((day) => {
-            const dayKey = getDayKey(day);
-            const dayTasks = tasksByDay[dayKey] || [];
-
-            return (
-              <UpcomingDayColumn
-                key={dayKey}
-                dayKey={dayKey}
-                label={formatDayLabel(day, today)}
-                displayDate={formatFullDate(day)}
-                tasks={dayTasks}
-                onToggleComplete={onToggleComplete}
-                onDeleteTask={onDeleteTask}
-                onFocus={onFocus}
-                onAddTask={handleAddTask}
-                inputValue={newTaskValues[dayKey] || ''}
-                onInputChange={(val) => setNewTaskValues((prev) => ({ ...prev, [dayKey]: val }))}
-                isComposerOpen={activeComposer === dayKey}
-                openComposer={() => setActiveComposer(dayKey)}
-                closeComposer={() => setActiveComposer(null)}
-              />
-            );
-          })}
-        </div>
+        <UpcomingDayPanel
+          dayKey={selectedDay}
+          display={days.find((d) => d.key === selectedDay)?.display || ''}
+          tasks={selectedTasks}
+          composerValue={composerValue}
+          onComposerChange={setComposerValue}
+          onAddTask={handleAddTask}
+          onToggleComplete={onToggleComplete}
+          onDeleteTask={onDeleteTask}
+          onFocus={onFocus}
+        />
       </DndContext>
     </div>
   );
 };
 
-interface UpcomingDayColumnProps {
+interface NavDayButtonProps {
+  day: { key: string; date: Date; navLabel: string };
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+const NavDayButton: React.FC<NavDayButtonProps> = ({ day, isSelected, onSelect }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `nav-${day.key}`,
+    data: { type: 'nav', dayKey: day.key },
+  });
+
+  return (
+    <button
+      ref={setNodeRef}
+      className={`upcoming-nav-item ${isSelected ? 'selected' : ''} ${isOver ? 'drop' : ''}`}
+      onClick={onSelect}
+      type="button"
+    >
+      <span className="upcoming-nav-weekday">{day.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+      <span className="upcoming-nav-date">{day.date.getDate()}</span>
+    </button>
+  );
+};
+
+interface UpcomingDayPanelProps {
   dayKey: string;
-  label: string;
-  displayDate: string;
+  display: string;
   tasks: Task[];
-  inputValue: string;
-  isComposerOpen: boolean;
+  composerValue: string;
+  onComposerChange: (value: string) => void;
+  onAddTask: (e: React.FormEvent<HTMLFormElement>) => void;
   onToggleComplete: (taskId: number) => void;
   onDeleteTask: (taskId: number) => void;
   onFocus?: (task: Task) => void;
-  onAddTask: (dayKey: string) => void;
-  onInputChange: (value: string) => void;
-  openComposer: () => void;
-  closeComposer: () => void;
 }
 
-const UpcomingDayColumn: React.FC<UpcomingDayColumnProps> = ({
+const UpcomingDayPanel: React.FC<UpcomingDayPanelProps> = ({
   dayKey,
-  label,
-  displayDate,
+  display,
   tasks,
-  inputValue,
-  isComposerOpen,
+  composerValue,
+  onComposerChange,
+  onAddTask,
   onToggleComplete,
   onDeleteTask,
   onFocus,
-  onAddTask,
-  onInputChange,
-  openComposer,
-  closeComposer,
 }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: `day-${dayKey}`,
-    data: { type: 'day', dayKey },
+    id: `list-${dayKey}`,
+    data: { type: 'day-list', dayKey },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    if (inputValue.trim()) {
-      onAddTask(dayKey);
-    }
-  };
+  const items: UniqueIdentifier[] = tasks.map((task) => `task-${task.id}`);
 
   return (
-    <div className="upcoming-day">
-      <div className="upcoming-day-header">
-        <div>
-          <p className="upcoming-day-label">{label}</p>
-          <h3 className="upcoming-day-date">{displayDate}</h3>
-        </div>
-        <span className="upcoming-day-count">{tasks.length}</span>
-      </div>
+    <div className="upcoming-day-panel">
+      <div className="upcoming-day-title">{display}</div>
 
-      <div
-        className={`upcoming-day-schedule ${isOver ? 'drop-highlight' : ''}`}
-        ref={setNodeRef}
-      >
-        <SortableContext
-          items={tasks.map((task) => `task-${task.id}`)}
-          strategy={verticalListSortingStrategy}
-        >
+      <div className={`upcoming-day-schedule single ${isOver ? 'drop-highlight' : ''}`} ref={setNodeRef}>
+        <SortableContext items={items} strategy={verticalListSortingStrategy}>
           {tasks.length === 0 ? (
             <div className="upcoming-day-empty">
               <p>No tasks scheduled</p>
@@ -294,29 +285,20 @@ const UpcomingDayColumn: React.FC<UpcomingDayColumnProps> = ({
         </SortableContext>
       </div>
 
-      <div className="upcoming-add-task">
-        {isComposerOpen ? (
-          <form className="upcoming-add-form" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => onInputChange(e.target.value)}
-              placeholder="Add a task"
-              autoFocus
-            />
-            <div className="upcoming-add-actions">
-              <button type="submit">Add</button>
-              <button type="button" onClick={closeComposer}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : (
-          <button type="button" className="upcoming-add-link" onClick={openComposer}>
-            + Add task
+      <form className="upcoming-add-form" onSubmit={onAddTask}>
+        <input
+          type="text"
+          placeholder="Add task"
+          value={composerValue}
+          onChange={(e) => onComposerChange(e.target.value)}
+        />
+        <div className="upcoming-add-actions">
+          <button type="submit">Add</button>
+          <button type="button" onClick={() => onComposerChange('')}>
+            Clear
           </button>
-        )}
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
@@ -392,9 +374,7 @@ const SortableTaskRow: React.FC<SortableTaskRowProps> = ({
             {task.priority.toUpperCase()}
           </span>
           {task.category && <span className="category-chip">{task.category}</span>}
-          {task.scheduledDuration && (
-            <span className="duration-chip">{task.scheduledDuration} min</span>
-          )}
+          {task.scheduledDuration && <span className="duration-chip">{task.scheduledDuration} min</span>}
         </div>
       </div>
     </div>
