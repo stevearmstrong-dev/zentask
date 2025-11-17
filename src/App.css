@@ -7485,6 +7485,15 @@ body {
   color: #f5f5f7;
 }
 
+.dark-mode .upcoming-nav-item.selected {
+  border-color: rgba(147, 197, 253, 0.8);
+  box-shadow: 0 8px 20px rgba(147, 197, 253, 0.25);
+}
+
+.dark-mode .upcoming-nav-item.drop {
+  border-color: #93c5fd;
+}
+
 .upcoming-nav-weekday {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -7518,6 +7527,10 @@ body {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 16px;
+}
+
+.dark-mode .upcoming-day-title {
+  color: #f5f5f7;
 }
 
 .upcoming-day-schedule {
@@ -7722,4 +7735,14 @@ body {
 .upcoming-add-actions button[type="button"] {
   background: rgba(115, 171, 255, 0.15);
   color: #1d4ed8;
+}
+
+.dark-mode .upcoming-add-actions button[type="submit"] {
+  background: #4c6ef5;
+  color: #f8fafc;
+}
+
+.dark-mode .upcoming-add-actions button[type="button"] {
+  background: rgba(115, 171, 255, 0.25);
+  color: #dbeafe;
 }
