@@ -7616,3 +7616,194 @@ body {
 .dark-mode .kanban-task-duration {
   background: rgba(255, 255, 255, 0.08);
 }
+
+/* Upcoming View */
+.upcoming-view {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.upcoming-header h2 {
+  font-size: 2rem;
+}
+
+.upcoming-header p {
+  color: #6b7280;
+}
+
+.dark-mode .upcoming-header p {
+  color: #9ca3af;
+}
+
+.upcoming-empty {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  border: 1px dashed rgba(115, 171, 255, 0.4);
+}
+
+.dark-mode .upcoming-empty {
+  background: rgba(17, 23, 34, 0.8);
+}
+
+.upcoming-empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.upcoming-days {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.upcoming-day {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid rgba(115, 171, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(14, 63, 126, 0.08);
+}
+
+.dark-mode .upcoming-day {
+  background: rgba(17, 23, 34, 0.8);
+  border-color: rgba(115, 171, 255, 0.15);
+}
+
+.upcoming-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.upcoming-day-label {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.dark-mode .upcoming-day-label {
+  color: #9ca3af;
+}
+
+.upcoming-day-date {
+  margin: 0;
+}
+
+.upcoming-day-count {
+  background: rgba(115, 171, 255, 0.15);
+  color: #1d4ed8;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.upcoming-day-empty {
+  border: 1px dashed rgba(115, 171, 255, 0.3);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.upcoming-day-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.upcoming-task {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.upcoming-task-time {
+  text-align: right;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.dark-mode .upcoming-task-time {
+  color: #f5f5f7;
+}
+
+.upcoming-task-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(115, 171, 255, 0.2);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+
+.dark-mode .upcoming-task-card {
+  background: rgba(17, 23, 34, 0.85);
+  border-color: rgba(115, 171, 255, 0.25);
+}
+
+.upcoming-task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.upcoming-task-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.upcoming-task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.upcoming-task-btn {
+  border: none;
+  background: rgba(115, 171, 255, 0.15);
+  color: #1d4ed8;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.upcoming-task-btn.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.upcoming-task-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.dark-mode .upcoming-task-meta {
+  color: #d1d5db;
+}
+
+.priority-chip,
+.category-chip,
+.duration-chip {
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-weight: 500;
+}
+
+.dark-mode .priority-chip,
+.dark-mode .category-chip,
+.dark-mode .duration-chip {
+  background: rgba(255, 255, 255, 0.08);
+}

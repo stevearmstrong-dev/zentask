@@ -15,6 +15,7 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 - **Today View**: Focus on today's tasks with progress tracking and completion metrics
 - **Eisenhower Matrix**: Organize tasks by urgency and importance into four actionable quadrants
 - **Time Blocks**: Drag-and-drop scheduling with 15-minute intervals and visual task spanning
+- **Upcoming view**: Todoist-style weekly timeline showing future tasks by day
 - **Pomodoro Timer**: Built-in focus timer with work/break cycles, session tracking, and customizable durations
 - **Time Tracking**: Track time spent on each task with start/stop/reset controls and analytics
 - **Duration Estimation**: Set expected task duration for better planning
