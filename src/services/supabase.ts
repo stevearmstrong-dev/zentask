@@ -85,6 +85,7 @@ class SupabaseService {
             pomodoro_active: task.pomodoroActive || false,
             scheduled_start: task.scheduledStart || null,
             scheduled_duration: task.scheduledDuration || null,
+            status: task.status || 'todo',
           },
         ])
         .select()
@@ -127,6 +128,7 @@ class SupabaseService {
           pomodoro_active: updates.pomodoroActive,
           scheduled_start: updates.scheduledStart,
           scheduled_duration: updates.scheduledDuration,
+          status: updates.status,
         })
         .eq('id', taskId)
         .eq('user_email', userEmail)
@@ -200,6 +202,7 @@ class SupabaseService {
       pomodoroActive: dbTask.pomodoro_active || false,
       scheduledStart: dbTask.scheduled_start || undefined,
       scheduledDuration: dbTask.scheduled_duration || undefined,
+      status: (dbTask.status as 'todo' | 'inprogress' | 'done' | null) || (dbTask.completed ? 'done' : 'todo'),
     };
   }
 
@@ -225,6 +228,7 @@ class SupabaseService {
       pomodoro_active: task.pomodoroActive || false,
       scheduled_start: task.scheduledStart || null,
       scheduled_duration: task.scheduledDuration || null,
+      status: task.status || 'todo',
     };
   }
 }

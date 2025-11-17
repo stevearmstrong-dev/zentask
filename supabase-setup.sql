@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   category text,
   reminder_minutes integer,
   calendar_event_id text,
+  status text DEFAULT 'todo',
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

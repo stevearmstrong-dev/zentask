@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { Task, Recurrence } from './types';
+import { Task, Recurrence, TaskStatus } from './types';
 import ToDoForm from './components/ToDoForm';
 import ToDo from './components/ToDo';
 import Dashboard from './components/Dashboard';
@@ -21,6 +21,7 @@ import CelebrationToast from './components/CelebrationToast';
 import { getQuoteByCategory } from './data/navalQuotes';
 import supabaseService from './services/supabase';
 import { User } from '@supabase/supabase-js';
+import KanbanBoard from './components/KanbanBoard';
 
 type FilterType = 'all' | 'active' | 'completed';
 type AuthViewType = 'signin' | 'signup' | 'reset';
@@ -42,6 +43,20 @@ function App() {
   const [focusedTask, setFocusedTask] = useState<Task | null>(null);
   const [celebrationQuote, setCelebrationQuote] = useState<string | null>(null);
   const notifiedTasksRef = useRef<Set<string>>(new Set());
+
+  const normalizeTask = (task: Task): Task => ({
+    ...task,
+    status: task.status || (task.completed ? 'done' : 'todo'),
+  });
+
+  const parseTasksFromStorage = (raw: string): Task[] => {
+    try {
+      const parsed: Task[] = JSON.parse(raw);
+      return parsed.map(normalizeTask);
+    } catch {
+      return [];
+    }
+  };
 
   // Request notification permission
   useEffect(() => {
@@ -66,7 +81,7 @@ function App() {
       // Load tasks from localStorage for guest
       const savedTasks = localStorage.getItem('guestTasks');
       if (savedTasks) {
-        setTasks(JSON.parse(savedTasks));
+        setTasks(parseTasksFromStorage(savedTasks));
       }
       return;
     }
@@ -130,7 +145,7 @@ function App() {
       if (userEmail) {
         const dbTasks = await supabaseService.fetchTasks(userEmail);
         const appTasks = dbTasks.map(task => supabaseService.convertToAppFormat(task));
-        setTasks(appTasks);
+        setTasks(appTasks.map(normalizeTask));
       }
     };
 
@@ -262,6 +277,7 @@ function App() {
       isTracking: false,
       trackingStartTime: null,
       scheduledDuration: taskData.scheduledDuration,
+      status: taskData.status || 'todo',
     };
 
     // Save to Supabase if user is signed in
@@ -280,7 +296,11 @@ function App() {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
 
-    const updatedTask = { ...task, completed: !task.completed };
+    const updatedTask: Task = {
+      ...task,
+      completed: !task.completed,
+      status: !task.completed ? 'done' : 'todo',
+    };
 
     // Show celebration when completing a task
     if (!task.completed && updatedTask.completed) {
@@ -305,6 +325,7 @@ function App() {
           timeSpent: 0,
           isTracking: false,
           trackingStartTime: null,
+          status: 'todo',
         };
 
         // Save next occurrence to Supabase
@@ -362,6 +383,7 @@ function App() {
 
   const editTask = async (id: number, updatedData: Partial<Task>): Promise<void> => {
     const task = tasks.find((t) => t.id === id);
+    if (!task) return;
     const updatedTask = { ...task, ...updatedData } as Task;
 
     // Update in Supabase if user is signed in
@@ -378,6 +400,13 @@ function App() {
         task.id === id ? updatedTask : task
       )
     );
+  };
+
+  const updateTaskStatus = async (id: number, status: TaskStatus): Promise<void> => {
+    await editTask(id, {
+      status,
+      completed: status === 'done',
+    });
   };
 
   const updateTaskTime = async (id: number, timeData: Partial<Task>): Promise<void> => {
@@ -480,7 +509,7 @@ function App() {
     // Load any existing guest tasks
     const savedTasks = localStorage.getItem('guestTasks');
     if (savedTasks) {
-      setTasks(JSON.parse(savedTasks));
+      setTasks(parseTasksFromStorage(savedTasks));
     }
   };
 
@@ -676,6 +705,17 @@ function App() {
                 )}
               </div>
             )}
+          </>
+        ) : view === 'kanban' ? (
+          <>
+            <QuickAddTasks addTask={addTask} />
+            <ToDoForm addTask={addTask} />
+            <KanbanBoard
+              tasks={tasks}
+              onStatusChange={updateTaskStatus}
+              onToggleComplete={toggleComplete}
+              onDeleteTask={deleteTask}
+            />
           </>
         ) : view === 'pomodoro' ? (
           <PomodoroTimer />
