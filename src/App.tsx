@@ -25,12 +25,6 @@ import { User } from '@supabase/supabase-js';
 
 type FilterType = 'all' | 'active' | 'completed';
 type AuthViewType = 'signin' | 'signup' | 'reset';
-type UpcomingDropPayload = {
-  taskId: number;
-  sourceDate: string;
-  targetDate: string;
-  targetIndex: number;
-};
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -415,57 +409,6 @@ function App() {
     );
   };
 
-  const handleUpcomingTaskDrop = async ({ taskId, sourceDate, targetDate, targetIndex }: UpcomingDropPayload): Promise<void> => {
-    if (!targetDate) return;
-
-    const buildOrder = (date: string, excludeMoving: boolean): number[] => {
-      return tasks
-        .filter(task => task.dueDate === date && (!excludeMoving || task.id !== taskId))
-        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
-        .map(task => task.id);
-    };
-
-    const targetOrder = buildOrder(targetDate, true);
-    const insertionIndex = Math.min(Math.max(targetIndex, 0), targetOrder.length);
-    targetOrder.splice(insertionIndex, 0, taskId);
-    const sourceOrder = sourceDate !== targetDate ? buildOrder(sourceDate, true) : [];
-
-    const nextTasks = tasks.map(task => ({ ...task }));
-    const changedTasks: Task[] = [];
-
-    const applyOrder = (date: string, order: number[]) => {
-      order.forEach((id, idx) => {
-        const task = nextTasks.find(t => t.id === id);
-        if (!task) return;
-        if (task.dueDate !== date || task.sortOrder !== idx) {
-          task.dueDate = date;
-          task.sortOrder = idx;
-          changedTasks.push({ ...task });
-        }
-      });
-    };
-
-    applyOrder(targetDate, targetOrder);
-    if (sourceDate !== targetDate) {
-      applyOrder(sourceDate, sourceOrder);
-    }
-
-    if (changedTasks.length === 0) return;
-
-    setTasks(nextTasks);
-
-    if (userEmail) {
-      changedTasks.forEach((task) => {
-        supabaseService.updateTask(task.id, {
-          dueDate: task.dueDate,
-          sortOrder: task.sortOrder,
-        }, userEmail).catch((error) => {
-          console.error('Failed to update task order in Supabase:', error);
-        });
-      });
-    }
-  };
-
   const updateTaskTime = async (id: number, timeData: Partial<Task>): Promise<void> => {
     // If starting tracking, stop all other tasks
     if (timeData.isTracking) {
@@ -769,7 +712,6 @@ function App() {
             onToggleComplete={toggleComplete}
             onDeleteTask={deleteTask}
             onAddTask={addTask}
-            onTaskDrop={handleUpcomingTaskDrop}
             onFocus={setFocusedTask}
           />
         ) : view === 'pomodoro' ? (

@@ -7499,36 +7499,12 @@ body {
   box-shadow: 0 8px 20px rgba(115, 171, 255, 0.2);
 }
 
-.upcoming-nav-item.drop {
-  border-color: #4c6ef5;
-  background: rgba(76, 110, 245, 0.1);
-}
-
 .dark-mode .upcoming-nav-item {
   background: rgba(17, 23, 34, 0.9);
   border-color: rgba(115, 171, 255, 0.2);
   color: #f5f5f7;
 }
 
-.dark-mode .upcoming-nav-item.selected {
-  border-color: rgba(147, 197, 253, 0.8);
-  box-shadow: 0 8px 20px rgba(147, 197, 253, 0.25);
-}
-
-.dark-mode .upcoming-nav-item.drop {
-  border-color: #93c5fd;
-  background: rgba(147, 197, 253, 0.2);
-}
-
-.upcoming-nav-drop-indicator {
-  color: #22c55e;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.dark-mode .upcoming-nav-drop-indicator {
-  color: #4ade80;
-}
 
 .upcoming-nav-weekday {
   font-size: 0.75rem;
@@ -7619,16 +7595,6 @@ body {
   grid-template-columns: 100px 1fr;
   gap: 16px;
   align-items: center;
-  cursor: grab;
-}
-
-.upcoming-task.dragging {
-  opacity: 0.7;
-}
-
-.upcoming-task.overlay {
-  pointer-events: none;
-  grid-template-columns: 1fr;
 }
 
 .upcoming-task-time {
