@@ -226,7 +226,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
         </div>
       </div>
 
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
         <div className="upcoming-nav-wrapper">
           <button
             type="button"
