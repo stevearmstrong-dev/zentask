@@ -300,7 +300,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
         />
         <DragOverlay>
           {activeDragTask ? (
-            <div className="upcoming-task overlay">
+            <div className="drag-overlay-card">
               <TaskCard
                 task={activeDragTask}
                 onFocus={onFocus}
