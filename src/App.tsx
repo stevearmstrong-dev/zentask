@@ -679,16 +679,12 @@ function App() {
             )}
           </>
         ) : view === 'upcoming' ? (
-          <>
-            <QuickAddTasks addTask={addTask} />
-            <ToDoForm addTask={addTask} />
-            <UpcomingView
-              tasks={tasks}
-              onToggleComplete={toggleComplete}
-              onDeleteTask={deleteTask}
-              onFocus={setFocusedTask}
-            />
-          </>
+          <UpcomingView
+            tasks={tasks}
+            onToggleComplete={toggleComplete}
+            onDeleteTask={deleteTask}
+            onFocus={setFocusedTask}
+          />
         ) : view === 'pomodoro' ? (
           <PomodoroTimer />
         ) : view === 'matrix' ? (
