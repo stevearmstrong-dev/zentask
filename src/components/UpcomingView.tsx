@@ -7,6 +7,7 @@ import {
   useSensors,
   DragEndEvent,
   UniqueIdentifier,
+  closestCorners,
 } from '@dnd-kit/core';
 import { useDroppable } from '@dnd-kit/core';
 import {
@@ -231,6 +232,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
           <button
             type="button"
             className="nav-arrow"
+            disabled={selectedDay === days[0]?.key}
             onClick={() => {
               const currentIndex = days.findIndex((day) => day.key === selectedDay);
               const nextIndex = Math.max(0, currentIndex - 1);
@@ -253,6 +255,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
           <button
             type="button"
             className="nav-arrow"
+            disabled={selectedDay === days[days.length - 1]?.key}
             onClick={() => {
               const currentIndex = days.findIndex((day) => day.key === selectedDay);
               const nextIndex = Math.min(days.length - 1, currentIndex + 1);
