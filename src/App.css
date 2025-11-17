@@ -7628,7 +7628,6 @@ body {
 
 .upcoming-task.overlay {
   pointer-events: none;
-  transform: translate(-50%, -60%);
 }
 
 .upcoming-task-time {
