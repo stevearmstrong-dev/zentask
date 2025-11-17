@@ -110,6 +110,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
   const [selectedDay, setSelectedDay] = useState<string>(days[0]?.key || '');
   const [composerValue, setComposerValue] = useState('');
   const [showAllDays, setShowAllDays] = useState(false);
+  const navRef = React.useRef<HTMLDivElement | null>(null);
 
   const tasksByDay = useMemo(() => {
     const groups: Record<string, Task[]> = {};
@@ -203,7 +204,19 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
       </div>
 
       <div className="upcoming-nav-wrapper">
-        <div className="upcoming-nav">
+        <button
+          type="button"
+          className="nav-arrow"
+          onClick={() => {
+            const currentIndex = days.findIndex((day) => day.key === selectedDay);
+            const nextIndex = Math.max(0, currentIndex - 1);
+            setSelectedDay(days[nextIndex].key);
+            navRef.current?.scrollBy({ left: -100, behavior: 'smooth' });
+          }}
+        >
+          ←
+        </button>
+        <div className="upcoming-nav" ref={navRef}>
           {visibleDays.map((day) => (
             <NavDayButton
               key={day.key}
@@ -229,6 +242,18 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
             {showAllDays ? 'Collapse' : `Show next ${days.length - COLLAPSED_DAYS} days`}
           </button>
         )}
+        <button
+          type="button"
+          className="nav-arrow"
+          onClick={() => {
+            const currentIndex = days.findIndex((day) => day.key === selectedDay);
+            const nextIndex = Math.min(days.length - 1, currentIndex + 1);
+            setSelectedDay(days[nextIndex].key);
+            navRef.current?.scrollBy({ left: 100, behavior: 'smooth' });
+          }}
+        >
+          →
+        </button>
       </div>
 
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
