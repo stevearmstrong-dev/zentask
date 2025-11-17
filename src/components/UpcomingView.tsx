@@ -64,6 +64,17 @@ const deriveDisplayTime = (task: Task): string => {
   return 'All day';
 };
 
+const getEffectiveDate = (task: Task): Date | null => {
+  if (task.dueDate) {
+    const [year, month, day] = task.dueDate.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+  if (task.scheduledStart) {
+    return new Date(task.scheduledStart);
+  }
+  return null;
+};
+
 const UpcomingView: React.FC<UpcomingViewProps> = ({
   tasks,
   onToggleComplete,
@@ -101,11 +112,13 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
   const tasksByDay = useMemo(() => {
     const groups: Record<string, Task[]> = {};
     tasks.forEach((task) => {
-      if (!task.dueDate) return;
-      const dueDate = new Date(task.dueDate);
-      if (dueDate < tomorrow) return;
-      if (!groups[task.dueDate]) groups[task.dueDate] = [];
-      groups[task.dueDate].push(task);
+      const effectiveDate = getEffectiveDate(task);
+      if (!effectiveDate) return;
+      const dayStart = getStartOfDay(effectiveDate);
+      if (dayStart < tomorrow) return;
+      const key = formatKey(dayStart);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(task);
     });
 
     Object.keys(groups).forEach((key) => {

@@ -7716,14 +7716,16 @@ body {
 .upcoming-add-actions {
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
 }
 
 .upcoming-add-actions button {
-  flex: 1;
+  flex: 0 0 auto;
   border: none;
   border-radius: 8px;
-  padding: 8px 0;
+  padding: 6px 18px;
   font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
