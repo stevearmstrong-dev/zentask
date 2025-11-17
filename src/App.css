@@ -7501,6 +7501,7 @@ body {
 
 .upcoming-nav-item.drop {
   border-color: #4c6ef5;
+  background: rgba(76, 110, 245, 0.1);
 }
 
 .dark-mode .upcoming-nav-item {
@@ -7516,6 +7517,17 @@ body {
 
 .dark-mode .upcoming-nav-item.drop {
   border-color: #93c5fd;
+  background: rgba(147, 197, 253, 0.2);
+}
+
+.upcoming-nav-drop-indicator {
+  color: #22c55e;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.dark-mode .upcoming-nav-drop-indicator {
+  color: #4ade80;
 }
 
 .upcoming-nav-weekday {

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Task } from '../types';
 import {
   DndContext,
@@ -136,14 +136,14 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
 
   const selectedTasks = tasksByDay[selectedDay] || [];
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visibleDays.length === 0) return;
     if (!visibleDays.some((day) => day.key === selectedDay)) {
       setSelectedDay(visibleDays[0].key);
     }
   }, [visibleDays, selectedDay]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
       event.preventDefault();
@@ -305,6 +305,7 @@ const NavDayButton: React.FC<NavDayButtonProps> = ({ day, isSelected, onSelect }
     >
       <span className="upcoming-nav-weekday">{day.date.toLocaleDateString('en-US', { weekday: 'short' })}</span>
       <span className="upcoming-nav-date">{day.date.getDate()}</span>
+      {isOver && <span className="upcoming-nav-drop-indicator">+</span>}
     </button>
   );
 };
