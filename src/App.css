@@ -7440,6 +7440,13 @@ body {
   margin-bottom: 12px;
 }
 
+.upcoming-nav-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 12px;
+}
+
 .upcoming-nav {
   display: flex;
   gap: 12px;
@@ -7455,6 +7462,21 @@ body {
 .upcoming-nav::-webkit-scrollbar-thumb {
   background: rgba(115, 171, 255, 0.4);
   border-radius: 999px;
+}
+
+.upcoming-nav-toggle {
+  border: none;
+  background: rgba(115, 171, 255, 0.1);
+  color: #1d4ed8;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.dark-mode .upcoming-nav-toggle {
+  color: #bfdbfe;
+  background: rgba(115, 171, 255, 0.2);
 }
 
 .upcoming-nav-item {

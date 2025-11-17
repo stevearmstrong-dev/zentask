@@ -31,6 +31,7 @@ interface UpcomingViewProps {
 }
 
 const DAYS_TO_SHOW = 14;
+const COLLAPSED_DAYS = 7;
 
 const getStartOfDay = (date: Date): Date =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -108,6 +109,7 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
 
   const [selectedDay, setSelectedDay] = useState<string>(days[0]?.key || '');
   const [composerValue, setComposerValue] = useState('');
+  const [showAllDays, setShowAllDays] = useState(false);
 
   const tasksByDay = useMemo(() => {
     const groups: Record<string, Task[]> = {};
@@ -130,7 +132,17 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
     return groups;
   }, [tasks, tomorrow]);
 
+  const visibleDays = showAllDays ? days : days.slice(0, COLLAPSED_DAYS);
+  const hasExtraDays = days.length > COLLAPSED_DAYS;
+
   const selectedTasks = tasksByDay[selectedDay] || [];
+
+  React.useEffect(() => {
+    if (visibleDays.length === 0) return;
+    if (!visibleDays.some((day) => day.key === selectedDay)) {
+      setSelectedDay(visibleDays[0].key);
+    }
+  }, [visibleDays, selectedDay]);
 
   const handleAddTask = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -190,15 +202,26 @@ const UpcomingView: React.FC<UpcomingViewProps> = ({
         </div>
       </div>
 
-      <div className="upcoming-nav">
-        {days.map((day) => (
-          <NavDayButton
-            key={day.key}
-            day={day}
-            isSelected={day.key === selectedDay}
-            onSelect={() => setSelectedDay(day.key)}
-          />
-        ))}
+      <div className="upcoming-nav-wrapper">
+        <div className="upcoming-nav">
+          {visibleDays.map((day) => (
+            <NavDayButton
+              key={day.key}
+              day={day}
+              isSelected={day.key === selectedDay}
+              onSelect={() => setSelectedDay(day.key)}
+            />
+          ))}
+        </div>
+        {hasExtraDays && (
+          <button
+            type="button"
+            className="upcoming-nav-toggle"
+            onClick={() => setShowAllDays(!showAllDays)}
+          >
+            {showAllDays ? 'Collapse' : `Show next ${days.length - COLLAPSED_DAYS} days`}
+          </button>
+        )}
       </div>
 
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
