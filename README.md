@@ -38,6 +38,7 @@ A modern, full-stack productivity application built with React and Supabase. Zen
 - **Scheduling**: Set due dates and specific times for tasks
 - **Duration Planning**: Estimate task duration (15min to 4+ hours)
 - **Categories**: Organize tasks with predefined or custom categories
+- **Kanban Board**: Drag-and-drop board with Todo / In Progress / Done columns
 - **Upcoming Timeline**: Todoist-style view grouping the next 7 days with time-blocked tasks
 - **Drag-to-Reschedule**: Reorder and move tasks across upcoming days via drag-and-drop
 - **Search & Filter**: Search by text/category and filter by status (all, active, completed)

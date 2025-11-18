@@ -4,7 +4,9 @@ export type Priority = 'high' | 'medium' | 'low';
 
 export type Recurrence = 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'yearly' | null;
 
-export type ViewType = 'today' | 'tasks' | 'dashboard' | 'matrix' | 'pomodoro' | 'timeblocks' | 'upcoming';
+export type ViewType = 'today' | 'tasks' | 'dashboard' | 'matrix' | 'pomodoro' | 'timeblocks' | 'upcoming' | 'kanban';
+
+export type TaskStatus = 'todo' | 'inprogress' | 'done';
 
 export interface Task {
   id: number;
@@ -26,6 +28,7 @@ export interface Task {
   scheduledStart?: string; // ISO timestamp for scheduled start time
   scheduledDuration?: number; // Duration in minutes
   sortOrder?: number;
+  status?: TaskStatus;
 }
 
 export interface TimeData {
@@ -69,5 +72,6 @@ export interface DbTask {
   scheduled_start: string | null;
   scheduled_duration: number | null;
   sort_order: number | null;
+  status: string | null;
   created_at?: string;
 }
