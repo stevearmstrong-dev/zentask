@@ -283,30 +283,19 @@ body {
 .voice-input-btn.add-task {
   background: #34c759;
   width: auto;
-  padding: 0 20px;
-  border-radius: 22px;
-  animation: successPulse 1.5s ease-in-out infinite;
+  padding: 0 16px;
+  border-radius: 18px;
 }
 
 .voice-input-btn.add-task:hover {
   background: #30b350;
-  transform: scale(1.05);
 }
 
 .add-task-text {
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
-}
-
-@keyframes successPulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(52, 199, 89, 0);
-  }
 }
 
 .mic-icon {
@@ -3496,6 +3485,58 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
+}
+
+.quick-add-task.custom-card {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.quick-add-task.custom-card input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.quick-add-task.custom-card input::placeholder {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.dark-mode .quick-add-task.custom-card input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.quick-add-custom-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-weight: 600;
+  color: #1d4ed8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.quick-add-custom-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quick-add-custom-btn:not(:disabled):hover {
+  background: rgba(115, 171, 255, 0.3);
+}
+
+.dark-mode .quick-add-custom-btn {
+  background: rgba(59, 130, 246, 0.3);
+  color: #f8fafc;
+}
+
+.dark-mode .quick-add-custom-btn:not(:disabled):hover {
+  background: rgba(59, 130, 246, 0.45);
 }
 
 .quick-add-task {
@@ -8015,20 +8056,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.upcoming-add-form input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(115, 171, 255, 0.3);
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.dark-mode .upcoming-add-form input {
-  background: rgba(17, 23, 34, 0.85);
-  border-color: rgba(115, 171, 255, 0.4);
-  color: #f5f5f7;
 }
 
 .upcoming-add-actions {

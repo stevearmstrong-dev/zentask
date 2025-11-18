@@ -23,6 +23,7 @@ interface QuickAddTasksProps {
 
 function QuickAddTasks({ addTask }: QuickAddTasksProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);
+  const [customText, setCustomText] = useState('');
 
   const quickTasks: QuickTask[] = [
     // Hydration
@@ -74,6 +75,19 @@ function QuickAddTasks({ addTask }: QuickAddTasksProps) {
     });
   };
 
+  const handleCustomAdd = (): void => {
+    if (!customText.trim()) return;
+    addTask({
+      text: customText.trim(),
+      priority: 'medium',
+      category: '',
+      dueDate: getTodayLocalDate(),
+      dueTime: '',
+      reminderMinutes: null,
+    });
+    setCustomText('');
+  };
+
   return (
     <div className="quick-add-section">
       <div className="quick-add-header">
@@ -103,6 +117,22 @@ function QuickAddTasks({ addTask }: QuickAddTasksProps) {
               <span className="quick-task-text">{task.text}</span>
             </button>
           ))}
+          <div className="quick-add-task custom-card">
+            <input
+              type="text"
+              placeholder="Custom quick task..."
+              value={customText}
+              onChange={(event) => setCustomText(event.target.value)}
+            />
+            <button
+              type="button"
+              className="quick-add-custom-btn"
+              onClick={handleCustomAdd}
+              disabled={!customText.trim()}
+            >
+              Add
+            </button>
+          </div>
         </div>
       )}
     </div>

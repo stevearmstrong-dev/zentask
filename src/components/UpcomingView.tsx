@@ -279,6 +279,7 @@ const UpcomingDayPanel: React.FC<UpcomingDayPanelProps> = ({
   const scheduledTasks = tasks.filter((task) => !!task.scheduledStart);
   const unscheduledTasks = tasks.filter((task) => !task.scheduledStart);
   const unscheduledIds = unscheduledTasks.map((task) => `unscheduled-task-${task.id}`);
+  const [voiceError] = useState('');
 
   const [editorTask, setEditorTask] = useState<Task | null>(null);
   const [editorStart, setEditorStart] = useState('09:00');
@@ -337,6 +338,7 @@ const UpcomingDayPanel: React.FC<UpcomingDayPanelProps> = ({
       }
     }
   };
+
 
   return (
     <div className="upcoming-day-panel">
