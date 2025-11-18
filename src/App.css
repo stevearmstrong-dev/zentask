@@ -7706,6 +7706,13 @@ body {
   font-size: 0.85rem;
 }
 
+.unscheduled-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
 .dark-mode .unscheduled-header h4 {
   color: #f8fafc;
 }
