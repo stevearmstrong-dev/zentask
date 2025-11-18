@@ -275,6 +275,15 @@ function App() {
     const resolvedSortOrder = typeof taskData.sortOrder === 'number'
       ? taskData.sortOrder
       : getNextSortOrder(resolvedDueDate);
+    const resolvedDueTime = taskData.dueTime || '';
+
+    let scheduledStart = taskData.scheduledStart;
+    if (!scheduledStart && resolvedDueDate && resolvedDueTime) {
+      const [year, month, day] = resolvedDueDate.split('-').map(Number);
+      const [hours, minutes] = resolvedDueTime.split(':').map(Number);
+      const startDate = new Date(year, month - 1, day, hours || 0, minutes || 0, 0, 0);
+      scheduledStart = startDate.toISOString();
+    }
 
     const newTask: Task = {
       id: Date.now(),
@@ -282,14 +291,15 @@ function App() {
       completed: false,
       priority: taskData.priority || 'medium',
       dueDate: resolvedDueDate,
-      dueTime: taskData.dueTime || '',
+      dueTime: resolvedDueTime,
       category: taskData.category || '',
       reminderMinutes: taskData.reminderMinutes || null,
       recurrence: taskData.recurrence || null,
       timeSpent: 0,
       isTracking: false,
       trackingStartTime: null,
-      scheduledDuration: taskData.scheduledDuration,
+      scheduledStart,
+      scheduledDuration: taskData.scheduledDuration || (scheduledStart ? 60 : undefined),
       sortOrder: resolvedSortOrder,
     };
 
